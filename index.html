@@ -31,7 +31,7 @@ body{font-family:var(--ui);color:var(--ink);font-size:14px;background:var(--sky)
 a{color:var(--aqua)}
 :focus-visible{outline:2px solid var(--amber);outline-offset:2px}
 #wall{position:fixed;inset:0;width:100%;height:100%;z-index:0}
-.shell{position:relative;z-index:1;height:100%;display:grid;grid-template-rows:auto 1fr auto}
+.shell{position:relative;z-index:1;height:100%;display:grid;grid-template-rows:auto 1fr}
 
 /* top bar */
 .topbar{
@@ -46,11 +46,9 @@ a{color:var(--aqua)}
 .ws{display:flex;gap:5px}
 .ws i{width:7px;height:7px;border-radius:4px;background:var(--dim);opacity:.5}
 .ws i.on{width:20px;background:var(--amber);opacity:1}
-.loc{font-weight:600;letter-spacing:.01em}
-.clock{font-weight:500;font-variant-numeric:tabular-nums;letter-spacing:.01em}
+.loc{font-weight:600;letter-spacing:.01em;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.clock{font-weight:500;font-variant-numeric:tabular-nums;letter-spacing:.01em;white-space:nowrap}
 .tb-right{display:flex;justify-content:flex-end;align-items:center;gap:12px;color:var(--ink)}
-.tb-right svg{width:15px;height:15px;opacity:.9}
-.tb-right .user{font-family:var(--mono);font-size:12px;color:var(--dim)}
 
 /* desktop */
 .desktop{position:relative;min-height:0;padding:28px 24px 32px;display:grid;
@@ -61,12 +59,9 @@ a{color:var(--aqua)}
   backdrop-filter:blur(18px) saturate(1.2);-webkit-backdrop-filter:blur(18px) saturate(1.2);
   box-shadow:0 1px 0 rgba(255,255,255,.06) inset,0 24px 60px rgba(0,0,0,.5);
 }
-.win.hidden{display:none}
-.win.max{position:absolute;inset:14px;z-index:5}
 .bar{display:flex;align-items:center;gap:10px;padding:9px 12px;border-bottom:1px solid var(--line);
   background:rgba(0,0,0,.18);font-size:13px;font-weight:600;user-select:none}
 .bar .t{flex:1;text-align:center;color:var(--ink)}
-.bar .t small{font-weight:400;color:var(--dim);font-family:var(--mono);font-size:11.5px;margin-left:6px}
 .ctl{display:flex;gap:7px}
 .ctl i{width:12px;height:12px;border-radius:50%}
 .ctl .c{background:var(--rose)} .ctl .m{background:var(--amber)} .ctl .x{background:var(--aqua)}
@@ -82,7 +77,7 @@ a{color:var(--aqua)}
   background:none;border:0;color:var(--ink);font:inherit;font-size:13px;text-align:left;cursor:pointer;text-decoration:none;
 }
 .side button:hover,.side a:hover{background:rgba(255,255,255,.06)}
-.side button.on{background:var(--sel);color:var(--amber)}
+.side button.on,.side a.on{background:var(--sel);color:var(--amber)}
 .side svg{width:15px;height:15px;flex:none}
 .side .sw{width:9px;height:9px;border-radius:3px;flex:none}
 .side .lbl{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -94,12 +89,11 @@ a{color:var(--aqua)}
 .search input{flex:1;min-width:0;background:none;border:0;outline:0;color:var(--ink);font:inherit;font-size:13px}
 .search input::placeholder{color:var(--dim)}
 .empty{display:none;color:var(--dim);padding:24px 4px;text-align:center}
-.crumbs .oldpath{flex:1;font-family:var(--mono);font-size:12px;background:rgba(0,0,0,.22);border:1px solid var(--line);border-radius:7px;padding:5px 10px;color:var(--dim);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
-.crumbs .path b{color:var(--ink);font-weight:600}
 .vbtn{display:flex;border:1px solid var(--line);border-radius:7px;overflow:hidden}
 .vbtn button{background:none;border:0;color:var(--dim);padding:5px 8px;cursor:pointer;display:grid;place-items:center}
 .vbtn button.on{background:rgba(255,255,255,.08);color:var(--ink)}
 .vbtn svg{width:15px;height:15px}
+.in-folder .vbtn{display:none}
 .view{flex:1;min-height:0;overflow:auto;padding:16px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(138px,1fr));gap:8px}
 .item{display:grid;justify-items:center;align-content:start;gap:10px;padding:16px 8px 12px;border-radius:10px;text-decoration:none;color:var(--ink);text-align:center;border:1px solid transparent}
@@ -107,17 +101,51 @@ a{color:var(--aqua)}
 .item:hover svg{transform:translateY(-2px)}
 .item svg{width:64px;height:52px;filter:drop-shadow(0 6px 10px rgba(0,0,0,.35))}
 .item .n{font-size:13px;font-weight:500;line-height:1.3;text-wrap:balance}
-.item .d{font-family:var(--mono);font-size:11px;color:var(--dim)}
 .list{display:none;width:100%;border-collapse:collapse;font-size:13px}
 .list th{text-align:left;font-weight:500;color:var(--dim);font-size:12px;padding:6px 10px;border-bottom:1px solid var(--line)}
 .list td{padding:8px 10px;border-bottom:1px solid var(--line)}
 .list tr:hover td{background:rgba(255,255,255,.04)}
 .list a{color:var(--ink);text-decoration:none;display:flex;align-items:center;gap:10px}
 .list a svg{width:22px;height:18px;flex:none}
-.list .mono{font-family:var(--mono);font-size:12px;color:var(--dim)}
 .view.as-list .grid{display:none}
 .view.as-list .list{display:table}
 .statusbar{display:flex;justify-content:space-between;gap:10px;padding:7px 14px;border-top:1px solid var(--line);font-size:12px;color:var(--dim)}
+
+/* folder contents */
+.back{display:none;align-items:center;justify-content:center;width:32px;height:32px;border-radius:8px;border:1px solid var(--line);background:rgba(0,0,0,.22);color:var(--ink);cursor:pointer;flex:none}
+.back svg{width:16px;height:16px}
+.in-folder .back{display:flex}
+.files{display:none;list-style:none;margin:0;padding:0}
+.in-folder .files{display:block}
+.in-folder .grid,.in-folder .list{display:none!important}
+.f{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:9px;border:1px solid transparent}
+.f:hover{background:rgba(255,255,255,.05);border-color:var(--line)}
+.f a{flex:1;min-width:0;display:flex;align-items:center;gap:12px;color:var(--ink);text-decoration:none}
+.badge{flex:none;width:38px;height:38px;border-radius:9px;display:grid;place-items:center;font:700 10px var(--mono);letter-spacing:.04em;color:#111;text-transform:uppercase}
+.fn{min-width:0;display:flex;flex-direction:column;gap:2px}
+.fn b{font-weight:500;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fn small{color:var(--dim);font-size:12px;font-variant-numeric:tabular-nums}
+.new{font:600 10px var(--ui);color:#111;background:var(--amber);border-radius:5px;padding:1px 6px;margin-left:6px;vertical-align:1px}
+.del{display:none;background:none;border:1px solid var(--line);color:var(--rose);border-radius:7px;padding:5px 9px;font:inherit;font-size:12px;cursor:pointer}
+.admin .del{display:block}
+.note{color:var(--dim);padding:28px 8px;text-align:center}
+.up{display:none;align-items:center;gap:6px;background:var(--amber);color:#111;border:0;border-radius:8px;padding:7px 12px;font:600 13px var(--ui);cursor:pointer;flex:none}
+.admin.in-folder .up{display:flex}
+.up svg{width:15px;height:15px}
+.drop{outline:2px dashed var(--amber);outline-offset:-8px}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:60;background:var(--winsolid);border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-size:13px;box-shadow:0 12px 30px rgba(0,0,0,.4);display:none;max-width:calc(100% - 32px)}
+.toast.on{display:block}
+.adminlink{background:none;border:0;color:var(--dim);font:inherit;font-size:12px;cursor:pointer;padding:0}
+.adminlink:hover{color:var(--ink)}
+.dlg{position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.55);display:none;place-items:center;padding:16px}
+.dlg.on{display:grid}
+.dlg form{width:min(380px,100%);background:var(--winsolid);border:1px solid var(--line);border-radius:12px;padding:20px;display:grid;gap:12px}
+.dlg h2{margin:0;font-size:16px}
+.dlg p{margin:0;color:var(--dim);font-size:13px;line-height:1.5}
+.dlg input{background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:8px;padding:9px 11px;color:var(--ink);font:inherit;font-size:15px}
+.dlg .acts{display:flex;justify-content:flex-end;gap:8px}
+.dlg button{border-radius:8px;padding:8px 14px;font:600 13px var(--ui);cursor:pointer;border:1px solid var(--line);background:none;color:var(--ink)}
+.dlg button.pri{background:var(--amber);color:#111;border:0}
 
 /* boot */
 #boot{position:fixed;inset:0;z-index:50;background:#07090d;font-family:var(--mono);font-size:13px;color:var(--dim);padding:24px;overflow:hidden;cursor:pointer}
@@ -128,11 +156,10 @@ a{color:var(--aqua)}
 @media (max-width:860px){
   body{overflow:auto;background:#121821}
   #wall{display:none}
-  .shell{height:auto;min-height:100%;grid-template-rows:auto 1fr}
-  .topbar{position:sticky;top:0;z-index:3;background:#121821;backdrop-filter:none;-webkit-backdrop-filter:none;padding:12px 16px;grid-template-columns:1fr auto}
-  .tb-left .logo,.ws{display:none}
+  .shell{height:auto;min-height:100%}
+  .topbar{position:sticky;top:0;z-index:3;background:#121821;backdrop-filter:none;-webkit-backdrop-filter:none;padding:12px 16px;grid-template-columns:minmax(0,1fr) auto;gap:12px}
   .tb-left{display:none}
-  .loc{font-size:17px;font-weight:600}
+  .loc{font-size:17px;text-align:left}
   .clock{font-size:12px;color:var(--dim)}
   .desktop{padding:0;grid-template-columns:minmax(0,1fr)}
   .win{border:0;border-radius:0;background:transparent;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
@@ -142,17 +169,21 @@ a{color:var(--aqua)}
   .crumbs{border:0;padding:4px 16px 12px}
   .search{padding:9px 12px;border-radius:10px;background:rgba(255,255,255,.05)}
   .search input{font-size:16px}
+  .back{width:40px;height:40px;border-radius:10px}
   .vbtn{display:none}
+  .up span{display:none}
+  .up{padding:10px 12px;border-radius:10px}
   .view{padding:0 16px 16px;overflow:visible}
   .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
   .item{background:rgba(255,255,255,.04);border:1px solid var(--line);padding:18px 10px 14px}
   .item svg{width:52px;height:42px;filter:none}
   .item:hover svg{transform:none}
-  .statusbar{border:0;padding:4px 16px 24px;justify-content:center}
+  .f{padding:10px 4px}
+  .statusbar{border:0;padding:4px 16px 24px;justify-content:center;gap:16px}
 }
 @media (prefers-reduced-motion:no-preference){
   .item svg{transition:transform .18s}
-  .item,.side button{transition:background .15s}
+  .item,.side button,.f{transition:background .15s}
 }
 </style>
 </head>
@@ -180,69 +211,86 @@ a{color:var(--aqua)}
       <div class="fm">
         <aside class="side" aria-label="Places">
           <h3>Places</h3>
-          <button class="on" type="button"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M2 7.5L8 2.5l6 5V14H2z"/></svg><span class="lbl">Home</span></button>
+          <button class="on" type="button" id="sideHome"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M2 7.5L8 2.5l6 5V14H2z"/></svg><span class="lbl">Home</span></button>
           <h3>Courses</h3>
           <div id="sideCourses"></div>
         </aside>
         <div class="main">
           <div class="crumbs">
+            <button type="button" class="back" id="back" aria-label="Back to Home"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L5 8l5 5"/></svg></button>
             <label class="search"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5L14 14"/></svg><input id="q" type="search" placeholder="Search folders and files" aria-label="Search folders and files" autocomplete="off"></label>
             <span class="vbtn" role="group" aria-label="View">
               <button type="button" id="vGrid" class="on" aria-label="Icon view" aria-pressed="true"><svg viewBox="0 0 16 16" fill="currentColor"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg></button>
               <button type="button" id="vList" aria-label="List view" aria-pressed="false"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 4h12M2 8h12M2 12h12"/></svg></button>
             </span>
+            <button type="button" class="up" id="upBtn"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 11V3M4.5 6.5L8 3l3.5 3.5M3 13h10"/></svg><span>Upload</span></button>
+            <input type="file" id="fileIn" multiple hidden>
           </div>
           <div class="view" id="view">
             <div class="grid" id="grid"></div>
             <p class="empty" id="empty">No folders or files match your search.</p>
+            <ul class="files" id="files"></ul>
             <table class="list"><thead><tr><th>Name</th></tr></thead><tbody id="rows"></tbody></table>
           </div>
-          <div class="statusbar"><span id="count"></span></div>
+          <div class="statusbar"><span id="count"></span><button type="button" class="adminlink" id="adminLink">Coordinator</button></div>
         </div>
       </div>
     </section>
-
   </main>
-
 </div>
 
-<script>
-// ---- Edit this list to add, rename or remove a course ----
-var ROOT = "10qel_xLhMw19_bQ6LNBPKP1oaewVh3Wv";
-var COURSES = [
-  {dir:"selected-topics", name:"Selected Topics",                               id:"1bfMVBSq9zcrWtxdh4zqVsUbNT-sTBajh", tint:"#ef7f78"},
-  {dir:"logic-design",    name:"Logic Design and Computer Organization",        id:"1__6g4J2m3jfFQ5ceStRAJlyQqNuET4Cw", tint:"#f2b25a"},
-  {dir:"dynamics",        name:"Dynamics",                                      id:"1jAAe1_WKFWeDS5ipLZxaS-XoEIW8QzYz", tint:"#72d1bd"},
-  {dir:"diff-eq",         name:"Differential Equations and Numerical Analysis", id:"1_3J7Yw4hKXb5aZ2aM2ADdIQLNjmPmHyv", tint:"#8db6ee"},
-  {dir:"data-structures", name:"Data Structures and Problem Solving",           id:"1PRXov8l6FFvSjSW3g9ec1deHqJnQLkKC", tint:"#c69bf0"},
-  {dir:"software-eng",    name:"Advanced Software Engineering",                 id:"1Qar9zZ-7TKuyF59-j-t892_KT1Pw3V9C", tint:"#a8d47a"}
-];
-// -----------------------------------------------------------
+<div class="dlg" id="loginDlg"><form id="loginForm">
+  <h2>Coordinator sign in</h2>
+  <p>Enter your email and we'll send you a sign-in link. Only the coordinator can upload.</p>
+  <input type="email" id="loginEmail" required placeholder="you@example.com" aria-label="Email">
+  <div class="acts"><button type="button" id="loginCancel">Cancel</button><button class="pri" type="submit">Send link</button></div>
+</form></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+// ---- Settings ----
+var SUPABASE_URL = "https://xlaivygpeznbxaudreri.supabase.co";
+var SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhsYWl2eWdwZXpuYnhhdWRyZXJpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ3ODMyOTksImV4cCI6MjExMDM1OTI5OX0.iHiwv3SWr4NCOE3gnMJ0BradgtKLzujH_77d2LUjMbo";
+var BUCKET = "materials";
+// Folders: dir is the storage folder name, name is what students see.
+var COURSES = [
+  {dir:"selected-topics", name:"Selected Topics",                               tint:"#ef7f78"},
+  {dir:"logic-design",    name:"Logic Design and Computer Organization",        tint:"#f2b25a"},
+  {dir:"dynamics",        name:"Dynamics",                                      tint:"#72d1bd"},
+  {dir:"diff-eq",         name:"Differential Equations and Numerical Analysis", tint:"#8db6ee"},
+  {dir:"data-structures", name:"Data Structures and Problem Solving",           tint:"#c69bf0"},
+  {dir:"software-eng",    name:"Advanced Software Engineering",                 tint:"#a8d47a"}
+];
+// -------------------
+
+var sb = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-function url(id){ return "https://drive.google.com/drive/folders/"+id; }
+function $(id){ return document.getElementById(id); }
 function el(t,c,x){ var e=document.createElement(t); if(c) e.className=c; if(x!=null) e.textContent=x; return e; }
-function link(x,h){ var a=el("a",null,x); a.href=h; a.target="_blank"; a.rel="noopener"; return a; }
 function folderSvg(tint){
   return '<svg viewBox="0 0 64 52" aria-hidden="true"><path d="M4 9a5 5 0 0 1 5-5h14l6 6h26a5 5 0 0 1 5 5v28a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z" fill="'+tint+'" opacity=".55"/><path d="M4 19a5 5 0 0 1 5-5h46a5 5 0 0 1 5 5v24a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z" fill="'+tint+'"/><path d="M4 19a5 5 0 0 1 5-5h46a5 5 0 0 1 5 5v3H4z" fill="#fff" opacity=".18"/></svg>';
 }
+function course(dir){ return COURSES.filter(function(c){return c.dir===dir;})[0]; }
+function toast(msg,ms){ var t=$("toast"); t.textContent=msg; t.classList.add("on"); clearTimeout(toast.t); toast.t=setTimeout(function(){t.classList.remove("on");},ms||3500); }
+function size(b){ if(b==null) return ""; if(b<1024) return b+" B"; if(b<1048576) return (b/1024).toFixed(0)+" KB"; return (b/1048576).toFixed(1)+" MB"; }
+function when(iso){ var d=new Date(iso); return d.toLocaleDateString(undefined,{day:"numeric",month:"short"}); }
+var EXT={pdf:"#ef7f78",ppt:"#f2b25a",pptx:"#f2b25a",doc:"#8db6ee",docx:"#8db6ee",xls:"#a8d47a",xlsx:"#a8d47a",zip:"#c69bf0",rar:"#c69bf0",png:"#72d1bd",jpg:"#72d1bd",jpeg:"#72d1bd",mp4:"#72d1bd"};
 
 /* ---------- wallpaper ---------- */
 (function(){
-  var c=document.getElementById("wall"), x=c.getContext("2d"), stars=[];
+  var c=$("wall"), x=c.getContext("2d"), stars=[];
   for(var i=0;i<140;i++) stars.push([Math.random(),Math.random()*0.55,Math.random()*1.3+0.3,Math.random()*6.28]);
   function ridge(w,h,base,amp,seed,col){
     x.beginPath(); x.moveTo(0,h);
-    for(var px=0;px<=w;px+=6){
-      var t=px/w*seed;
-      var y=base+Math.sin(t*1.7)*amp*0.5+Math.sin(t*4.3+seed)*amp*0.28+Math.sin(t*9.1+seed*2)*amp*0.12;
-      x.lineTo(px,h*y);
-    }
+    for(var px=0;px<=w;px+=6){ var t=px/w*seed;
+      var y=base+Math.sin(t*1.7)*amp*0.5+Math.sin(t*4.3+seed)*amp*0.28+Math.sin(t*9.1+seed*2)*amp*0.12; x.lineTo(px,h*y); }
     x.lineTo(w,h); x.closePath(); x.fillStyle=col; x.fill();
   }
   function draw(time){
+    if(innerWidth<861){ if(!reduce) requestAnimationFrame(draw); return; }
     var d=window.devicePixelRatio||1, w=innerWidth, h=innerHeight;
-    if(c.width!==w*d){ c.width=w*d; c.height=h*d; }
+    if(c.width!==w*d||c.height!==h*d){ c.width=w*d; c.height=h*d; }
     x.setTransform(d,0,0,d,0,0);
     var g=x.createLinearGradient(0,0,0,h);
     g.addColorStop(0,"#0c1424"); g.addColorStop(.45,"#1d2540"); g.addColorStop(.72,"#5a3a52"); g.addColorStop(.9,"#c0715a");
@@ -253,50 +301,170 @@ function folderSvg(tint){
     var tt=(time||0)/1000;
     stars.forEach(function(p){ x.globalAlpha=0.35+0.45*Math.abs(Math.sin(p[3]+tt*0.6)); x.fillStyle="#fff"; x.fillRect(p[0]*w,p[1]*h,p[2],p[2]); });
     x.globalAlpha=1;
-    ridge(w,h,.70,.12,5,"#3b2c45");
-    ridge(w,h,.78,.10,8,"#2a2238");
-    ridge(w,h,.86,.08,13,"#1a1726");
-    ridge(w,h,.93,.05,21,"#100e18");
+    ridge(w,h,.70,.12,5,"#3b2c45"); ridge(w,h,.78,.10,8,"#2a2238"); ridge(w,h,.86,.08,13,"#1a1726"); ridge(w,h,.93,.05,21,"#100e18");
     if(!reduce) requestAnimationFrame(draw);
   }
   addEventListener("resize",function(){ if(reduce) draw(0); });
   draw(0); if(!reduce) requestAnimationFrame(draw);
 })();
 
-/* ---------- files ---------- */
-var grid=document.getElementById("grid"), rows=document.getElementById("rows"), sideC=document.getElementById("sideCourses");
+/* ---------- home: folders ---------- */
+var grid=$("grid"), rows=$("rows"), sideC=$("sideCourses"), view=$("view"), files=$("files"), fm=document.querySelector(".fm"), countEl=$("count");
 COURSES.forEach(function(c){
-  var a=el("a","item"); a.href=url(c.id); a.target="_blank"; a.rel="noopener";
-  a.innerHTML=folderSvg(c.tint); a.appendChild(el("span","n",c.name));
-  grid.appendChild(a);
-  var tr=el("tr"), td=el("td"), la=link("",url(c.id)); la.innerHTML=folderSvg(c.tint); la.appendChild(document.createTextNode(c.name));
+  var a=el("a","item"); a.href="#"+c.dir; a.innerHTML=folderSvg(c.tint); a.appendChild(el("span","n",c.name)); grid.appendChild(a);
+  var tr=el("tr"), td=el("td"), la=el("a"); la.href="#"+c.dir; la.innerHTML=folderSvg(c.tint); la.appendChild(document.createTextNode(c.name));
   td.appendChild(la); tr.appendChild(td); rows.appendChild(tr);
-  var s=link("",url(c.id)); var sw=el("span","sw"); sw.style.background=c.tint; s.appendChild(sw); s.appendChild(el("span","lbl",c.name)); s.title=c.name;
+  var s=el("a"); s.href="#"+c.dir; s.dataset.dir=c.dir; var sw=el("span","sw"); sw.style.background=c.tint; s.appendChild(sw); s.appendChild(el("span","lbl",c.name)); s.title=c.name;
   sideC.appendChild(s);
 });
-var countEl=document.getElementById("count");
-countEl.textContent=COURSES.length+" folders";
-document.getElementById("q").addEventListener("input",function(){
-  var q=this.value.trim().toLowerCase(), n=0, items=grid.children, trs=rows.children;
-  COURSES.forEach(function(c,i){ var hit=!q||c.name.toLowerCase().indexOf(q)>=0||c.dir.indexOf(q)>=0; if(hit) n++;
-    items[i].style.display=hit?"":"none"; trs[i].style.display=hit?"":"none"; });
-  document.getElementById("empty").style.display=n?"none":"block";
-  countEl.textContent=q?(n+" of "+COURSES.length+" folders"):(COURSES.length+" folders");
-});
-var view=document.getElementById("view"), vG=document.getElementById("vGrid"), vL=document.getElementById("vList");
+
+/* ---------- files from storage ---------- */
+var cache={};
+function listDir(dir){
+  if(cache[dir]) return Promise.resolve(cache[dir]);
+  if(!sb) return Promise.reject(new Error("offline"));
+  return sb.storage.from(BUCKET).list(dir,{limit:1000,sortBy:{column:"name",order:"asc"}}).then(function(r){
+    if(r.error) throw r.error;
+    var out=(r.data||[]).filter(function(f){ return f.id && f.name!==".emptyFolderPlaceholder"; });
+    cache[dir]=out; return out;
+  });
+}
+function pubUrl(dir,name){ return sb.storage.from(BUCKET).getPublicUrl(dir+"/"+name).data.publicUrl; }
+function fileRow(dir,f,showFolder){
+  var li=el("li","f"), a=el("a"); a.href=pubUrl(dir,f.name); a.target="_blank"; a.rel="noopener";
+  var ext=(f.name.split(".").pop()||"").toLowerCase(); if(ext===f.name.toLowerCase()) ext="file";
+  var b=el("span","badge",ext.slice(0,4)); b.style.background=EXT[ext]||"#8f9aa8"; a.appendChild(b);
+  var fn=el("span","fn"), nm=el("b",null,f.name);
+  var made=new Date(f.created_at||f.updated_at||0); if(Date.now()-made<3*864e5) nm.appendChild(el("span","new","NEW"));
+  fn.appendChild(nm);
+  var meta=[when(f.updated_at||f.created_at), size(f.metadata&&f.metadata.size)].filter(Boolean).join("  ·  ");
+  if(showFolder) meta=course(dir).name+"  ·  "+meta;
+  fn.appendChild(el("small",null,meta)); a.appendChild(fn); li.appendChild(a);
+  var del=el("button","del","Delete"); del.type="button";
+  del.onclick=function(){ removeFile(dir,f.name); }; li.appendChild(del);
+  return li;
+}
+
+/* ---------- routing ---------- */
+var current=null;
+function route(){
+  var dir=(location.hash||"").slice(1), c=course(dir);
+  current=c?dir:null;
+  $("q").value="";
+  document.querySelectorAll("#sideCourses a").forEach(function(a){ a.classList.toggle("on",a.dataset.dir===current); });
+  $("sideHome").classList.toggle("on",!current);
+  if(!c){
+    fm.classList.remove("in-folder"); $("loc").textContent="Home"; document.title="Sophomore Materials";
+    $("q").placeholder="Search folders and files";
+    showHome(""); return;
+  }
+  fm.classList.add("in-folder"); $("loc").textContent=c.name; document.title=c.name+" · Sophomore Materials";
+  $("q").placeholder="Search in "+c.name;
+  renderFolder("");
+}
+function renderFolder(q){
+  var dir=current; files.textContent=""; files.appendChild(el("li","note","Loading…"));
+  listDir(dir).then(function(list){
+    if(dir!==current) return;
+    files.textContent="";
+    var hits=list.filter(function(f){ return !q||f.name.toLowerCase().indexOf(q)>=0; });
+    hits.sort(function(a,b){ return new Date(b.created_at)-new Date(a.created_at); });
+    hits.forEach(function(f){ files.appendChild(fileRow(dir,f,false)); });
+    if(!list.length) files.appendChild(el("li","note","Nothing here yet."));
+    else if(!hits.length) files.appendChild(el("li","note","No files match your search."));
+    countEl.textContent=q?(hits.length+" of "+list.length+" files"):(list.length+(list.length===1?" file":" files"));
+  }).catch(function(){ files.textContent=""; files.appendChild(el("li","note","Couldn't load the files. Check your connection and refresh.")); });
+}
+function showHome(q){
+  var n=0, items=grid.children, trs=rows.children;
+  COURSES.forEach(function(c,i){ var hit=!q||c.name.toLowerCase().indexOf(q)>=0; if(hit) n++; items[i].style.display=hit?"":"none"; trs[i].style.display=hit?"":"none"; });
+  files.textContent="";
+  if(!q){ fm.classList.remove("in-folder"); $("empty").style.display="none"; countEl.textContent=COURSES.length+" folders"; return; }
+  // search files across all folders
+  Promise.all(COURSES.map(function(c){ return listDir(c.dir).then(function(l){ return l.map(function(f){return [c.dir,f];}); }).catch(function(){return [];}); }))
+  .then(function(all){
+    if($("q").value.trim().toLowerCase()!==q||current) return;
+    var hits=[].concat.apply([],all).filter(function(p){ return p[1].name.toLowerCase().indexOf(q)>=0; });
+    files.textContent="";
+    hits.forEach(function(p){ files.appendChild(fileRow(p[0],p[1],true)); });
+    files.style.display=hits.length?"block":"";
+    $("empty").style.display=(n||hits.length)?"none":"block";
+    countEl.textContent=n+(n===1?" folder":" folders")+", "+hits.length+(hits.length===1?" file":" files");
+  });
+}
+$("q").addEventListener("input",function(){ var q=this.value.trim().toLowerCase(); if(current) renderFolder(q); else { files.style.display=""; showHome(q); } });
+$("back").onclick=function(){ location.hash=""; };
+$("sideHome").onclick=function(){ location.hash=""; };
+addEventListener("hashchange",route);
+
+/* ---------- view toggle ---------- */
+var vG=$("vGrid"), vL=$("vList");
 function setView(list){ view.classList.toggle("as-list",list); vG.classList.toggle("on",!list); vL.classList.toggle("on",list);
   vG.setAttribute("aria-pressed",!list); vL.setAttribute("aria-pressed",list); try{localStorage.setItem("sm-view",list?"list":"grid");}catch(e){} }
 vG.onclick=function(){setView(false)}; vL.onclick=function(){setView(true)};
 try{ if(localStorage.getItem("sm-view")==="list") setView(true); }catch(e){}
 
 /* ---------- clock ---------- */
-function tick(){ var d=new Date(); document.getElementById("clock").textContent=
+function tick(){ var d=new Date(); $("clock").textContent=
   d.toLocaleDateString(undefined,{weekday:"short",day:"numeric",month:"short"})+"   "+d.toLocaleTimeString(undefined,{hour:"2-digit",minute:"2-digit"}); }
 tick(); setInterval(tick,15000);
 
+/* ---------- coordinator ---------- */
+var isAdmin=false;
+function setAdmin(on){ isAdmin=on; document.body.classList.toggle("admin",on); fm.classList.toggle("admin",on);
+  $("adminLink").textContent=on?"Sign out":"Coordinator"; }
+if(sb){ sb.auth.getSession().then(function(r){ setAdmin(!!(r.data&&r.data.session)); });
+sb.auth.onAuthStateChange(function(ev,session){ setAdmin(!!session); if(ev==="SIGNED_IN") toast("Signed in. Open a folder to upload."); }); }
+$("adminLink").onclick=function(){
+  if(!sb){ toast("Sign-in is unavailable right now. Refresh and try again."); return; }
+  if(isAdmin){ sb.auth.signOut(); toast("Signed out."); return; }
+  $("loginDlg").classList.add("on"); $("loginEmail").focus();
+};
+$("loginCancel").onclick=function(){ $("loginDlg").classList.remove("on"); };
+$("loginForm").addEventListener("submit",function(e){
+  e.preventDefault();
+  sb.auth.signInWithOtp({email:$("loginEmail").value.trim(),options:{emailRedirectTo:location.origin+location.pathname,shouldCreateUser:false}}).then(function(r){
+    if(r.error){ toast("Couldn't send the link: "+r.error.message,6000); return; }
+    $("loginDlg").classList.remove("on"); toast("Check your email for the sign-in link.",6000);
+  });
+});
+function cleanName(n){ return n.replace(/[^\w.\-() ]+/g,"_").replace(/_+/g,"_"); }
+function upload(list){
+  if(!isAdmin||!current||!list.length) return;
+  var dir=current, done=0, failed=0, names=[];
+  toast("Uploading "+list.length+(list.length===1?" file…":" files…"),60000);
+  Promise.all([].map.call(list,function(f){
+    var name=cleanName(f.name);
+    return sb.storage.from(BUCKET).upload(dir+"/"+name,f,{upsert:true,contentType:f.type||undefined}).then(function(r){
+      if(r.error){ failed++; return; } done++; names.push(name);
+      return sb.from("updates").insert({course:dir,file_name:name,action:"added"});
+    });
+  })).then(function(){
+    delete cache[dir]; if(current===dir) renderFolder("");
+    toast(failed?(done+" uploaded, "+failed+" failed. Try the failed ones again."):(done===1?"Uploaded "+names[0]:"Uploaded "+done+" files"),5000);
+  });
+}
+function removeFile(dir,name){
+  if(!isAdmin) return;
+  var li=[].filter.call(files.children,function(x){ return x.querySelector("b")&&x.querySelector("b").firstChild.nodeValue===name; })[0];
+  var b=li&&li.querySelector(".del");
+  if(b&&b.dataset.sure!=="1"){ b.dataset.sure="1"; b.textContent="Sure?"; setTimeout(function(){ b.dataset.sure=""; b.textContent="Delete"; },3000); return; }
+  sb.storage.from(BUCKET).remove([dir+"/"+name]).then(function(r){
+    if(r.error){ toast("Couldn't delete: "+r.error.message,6000); return; }
+    delete cache[dir]; if(current===dir) renderFolder(""); toast("Deleted "+name);
+  });
+}
+$("upBtn").onclick=function(){ $("fileIn").click(); };
+$("fileIn").onchange=function(){ upload(this.files); this.value=""; };
+view.addEventListener("dragover",function(e){ if(isAdmin&&current){ e.preventDefault(); view.classList.add("drop"); } });
+view.addEventListener("dragleave",function(){ view.classList.remove("drop"); });
+view.addEventListener("drop",function(e){ view.classList.remove("drop"); if(isAdmin&&current){ e.preventDefault(); upload(e.dataTransfer.files); } });
+
+route();
+
 /* ---------- boot ---------- */
 (function(){
-  var boot=document.getElementById("boot"), bl=document.getElementById("bootlog"), done=false;
+  var boot=$("boot"), bl=$("bootlog"), done=false;
   var seen=false; try{ seen=sessionStorage.getItem("sm-booted")==="1"; }catch(e){}
   function finish(){ if(done) return; done=true; boot.classList.add("gone"); try{sessionStorage.setItem("sm-booted","1");}catch(e){} setTimeout(function(){boot.remove();},450); }
   if(reduce||seen||innerWidth<861){ boot.remove(); return; }
