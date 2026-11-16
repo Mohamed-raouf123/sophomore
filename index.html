@@ -363,7 +363,7 @@ function fileRow(path,f,showFolder){
   var ext=(f.name.split(".").pop()||"").toLowerCase(); if(ext===f.name.toLowerCase()) ext="file";
   var b=el("span","badge",ext.slice(0,4)); b.style.background=EXT[ext]||"#8f9aa8"; a.appendChild(b);
   var fn=el("span","fn"), nm=el("b",null,f.name);
-  var made=new Date(f.created_at||f.updated_at||0); if(Date.now()-made<3*864e5) nm.appendChild(el("span","new","NEW"));
+  var made=new Date(f.created_at||f.updated_at||0); if(Date.now()-made<2*864e5) nm.appendChild(el("span","new","NEW"));
   fn.appendChild(nm);
   var meta=[when(f.updated_at||f.created_at), size(f.metadata&&f.metadata.size)].filter(Boolean).join("  ·  ");
   if(showFolder) meta=pretty(path)+"  ·  "+meta;
