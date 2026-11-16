@@ -406,7 +406,7 @@ function renderFolder(q){
       return;
     }
     l.dirs.forEach(function(d){ files.appendChild(folderRow(path,d)); });
-    var fl=l.files.slice().sort(function(a,b){ return new Date(b.created_at)-new Date(a.created_at); });
+    var fl=l.files.slice().sort(function(a,b){ return a.name.localeCompare(b.name,undefined,{numeric:true,sensitivity:"base"}); });
     fl.forEach(function(f){ files.appendChild(fileRow(path,f,false)); });
     if(!l.dirs.length&&!fl.length) files.appendChild(el("li","note","Nothing here yet."));
     var parts=[];
@@ -453,7 +453,7 @@ var isAdmin=false;
 function setAdmin(on){ isAdmin=on; document.body.classList.toggle("admin",on); fm.classList.toggle("admin",on);
   $("adminLink").textContent=on?"Sign out":"Coordinator"; }
 if(sb){ sb.auth.getSession().then(function(r){ setAdmin(!!(r.data&&r.data.session)); });
-sb.auth.onAuthStateChange(function(ev,session){ setAdmin(!!session); if(ev==="SIGNED_IN") toast("Signed in. Open a folder to upload."); }); }
+sb.auth.onAuthStateChange(function(ev,session){ setAdmin(!!session); if(ev==="SIGNED_IN") toast("Signed in"); }); }
 $("adminLink").onclick=function(){
   if(!sb){ toast("Sign-in is unavailable right now. Refresh and try again."); return; }
   if(isAdmin){ sb.auth.signOut(); toast("Signed out."); return; }
