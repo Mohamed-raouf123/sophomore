@@ -279,6 +279,7 @@ function el(t,c,x){ var e=document.createElement(t); if(c) e.className=c; if(x!=
 function folderSvg(tint){
   return '<svg viewBox="0 0 64 52" aria-hidden="true"><path d="M4 9a5 5 0 0 1 5-5h14l6 6h26a5 5 0 0 1 5 5v28a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z" fill="'+tint+'" opacity=".55"/><path d="M4 19a5 5 0 0 1 5-5h46a5 5 0 0 1 5 5v24a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z" fill="'+tint+'"/><path d="M4 19a5 5 0 0 1 5-5h46a5 5 0 0 1 5 5v3H4z" fill="#fff" opacity=".18"/></svg>';
 }
+function byName(a,b){ return a.localeCompare(b,undefined,{numeric:true,sensitivity:"base"}); }
 function course(dir){ return COURSES.filter(function(c){return c.dir===dir;})[0]; }
 function toast(msg,ms){ var t=$("toast"); t.textContent=msg; t.classList.add("on"); clearTimeout(toast.t); toast.t=setTimeout(function(){t.classList.remove("on");},ms||3500); }
 function size(b){ if(b==null) return ""; if(b<1024) return b+" B"; if(b<1048576) return (b/1024).toFixed(0)+" KB"; return (b/1048576).toFixed(1)+" MB"; }
@@ -399,14 +400,14 @@ function renderFolder(q){
     if(path!==current) return;
     files.textContent="";
     if(l.search){
-      var hits=l.search.filter(function(p){ return p[1].name.toLowerCase().indexOf(q)>=0; });
+      var hits=l.search.filter(function(p){ return p[1].name.toLowerCase().indexOf(q)>=0; }).sort(function(a,b){ return byName(a[0]+"/"+a[1].name,b[0]+"/"+b[1].name); });
       hits.forEach(function(p){ files.appendChild(fileRow(p[0],p[1],p[0]!==path)); });
       if(!hits.length) files.appendChild(el("li","note","No files match your search."));
       countEl.textContent=hits.length+(hits.length===1?" file":" files")+" found";
       return;
     }
-    l.dirs.forEach(function(d){ files.appendChild(folderRow(path,d)); });
-    var fl=l.files.slice().sort(function(a,b){ return a.name.localeCompare(b.name,undefined,{numeric:true,sensitivity:"base"}); });
+    l.dirs.slice().sort(byName).forEach(function(d){ files.appendChild(folderRow(path,d)); });
+    var fl=l.files.slice().sort(function(a,b){ return byName(a.name,b.name); });
     fl.forEach(function(f){ files.appendChild(fileRow(path,f,false)); });
     if(!l.dirs.length&&!fl.length) files.appendChild(el("li","note","Nothing here yet."));
     var parts=[];
@@ -423,7 +424,7 @@ function showHome(q){
   Promise.all(COURSES.map(function(c){ return walk(c.dir,3).catch(function(){return [];}); }))
   .then(function(all){
     if($("q").value.trim().toLowerCase()!==q||current) return;
-    var hits=[].concat.apply([],all).filter(function(p){ return p[1].name.toLowerCase().indexOf(q)>=0; });
+    var hits=[].concat.apply([],all).filter(function(p){ return p[1].name.toLowerCase().indexOf(q)>=0; }).sort(function(a,b){ return byName(a[0]+"/"+a[1].name,b[0]+"/"+b[1].name); });
     files.textContent="";
     hits.forEach(function(p){ files.appendChild(fileRow(p[0],p[1],true)); });
     files.style.display=hits.length?"block":"";
