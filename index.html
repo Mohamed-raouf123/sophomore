@@ -353,7 +353,7 @@ function pretty(path){ var p=path.split("/"), c=course(p[0]); return [c?c.name:p
 function folderRow(path,name){
   var li=el("li","f"), a=el("a"); a.href="#"+encodeURI(path+"/"+name);
   var ic=el("span","fico"); ic.innerHTML=folderSvg(course(path.split("/")[0]).tint); a.appendChild(ic);
-  var fn=el("span","fn"); fn.appendChild(el("b",null,name)); fn.appendChild(el("small",null,"Folder")); a.appendChild(fn);
+  var fn=el("span","fn"); fn.appendChild(el("b",null,name)); a.appendChild(fn);
   li.appendChild(a);
   var del=el("button","del","Delete"); del.type="button"; del.onclick=function(){ removeFolder(path,name,del); }; li.appendChild(del);
   return li;
