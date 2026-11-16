@@ -83,7 +83,7 @@ a{color:var(--aqua)}
 .side .lbl{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .main{display:flex;flex-direction:column;min-height:0}
 .crumbs{display:flex;align-items:center;gap:8px;padding:9px 14px;border-bottom:1px solid var(--line);font-size:13px}
-.search{flex:1;display:flex;align-items:center;gap:8px;background:rgba(0,0,0,.22);border:1px solid var(--line);border-radius:7px;padding:5px 10px;color:var(--dim)}
+.search{flex:1;min-width:0;display:flex;align-items:center;gap:8px;background:rgba(0,0,0,.22);border:1px solid var(--line);border-radius:7px;padding:5px 10px;color:var(--dim)}
 .search:focus-within{border-color:var(--amber)}
 .search svg{width:15px;height:15px;flex:none}
 .search input{flex:1;min-width:0;background:none;border:0;outline:0;color:var(--ink);font:inherit;font-size:13px}
@@ -132,6 +132,9 @@ a{color:var(--aqua)}
 .up{display:none;align-items:center;gap:6px;background:var(--amber);color:#111;border:0;border-radius:8px;padding:7px 12px;font:600 13px var(--ui);cursor:pointer;flex:none}
 .admin.in-folder .up{display:flex}
 .up svg{width:15px;height:15px}
+.up.ghost{background:none;color:var(--ink);border:1px solid var(--line)}
+.fico{flex:none;width:38px;height:38px;display:grid;place-items:center}
+.fico svg{width:34px;height:28px}
 .drop{outline:2px dashed var(--amber);outline-offset:-8px}
 .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:60;background:var(--winsolid);border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-size:13px;box-shadow:0 12px 30px rgba(0,0,0,.4);display:none;max-width:calc(100% - 32px)}
 .toast.on{display:block}
@@ -223,6 +226,7 @@ a{color:var(--aqua)}
               <button type="button" id="vGrid" class="on" aria-label="Icon view" aria-pressed="true"><svg viewBox="0 0 16 16" fill="currentColor"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg></button>
               <button type="button" id="vList" aria-label="List view" aria-pressed="false"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 4h12M2 8h12M2 12h12"/></svg></button>
             </span>
+            <button type="button" class="up ghost" id="newBtn"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M1.5 4.5a1 1 0 0 1 1-1h3.3l1.4 1.5h6.3a1 1 0 0 1 1 1V12a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1z"/><path d="M8 7v4M6 9h4"/></svg><span>New folder</span></button>
             <button type="button" class="up" id="upBtn"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 11V3M4.5 6.5L8 3l3.5 3.5M3 13h10"/></svg><span>Upload</span></button>
             <input type="file" id="fileIn" multiple hidden>
           </div>
@@ -244,6 +248,12 @@ a{color:var(--aqua)}
   <p>Enter your email and we'll send you a sign-in link. Only the coordinator can upload.</p>
   <input type="email" id="loginEmail" required placeholder="you@example.com" aria-label="Email">
   <div class="acts"><button type="button" id="loginCancel">Cancel</button><button class="pri" type="submit">Send link</button></div>
+</form></div>
+<div class="dlg" id="folderDlg"><form id="folderForm">
+  <h2>New folder</h2>
+  <p>It will be created inside the folder you're in.</p>
+  <input type="text" id="folderName" required maxlength="60" placeholder="e.g. Lectures" aria-label="Folder name">
+  <div class="acts"><button type="button" id="folderCancel">Cancel</button><button class="pri" type="submit">Create</button></div>
 </form></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
@@ -319,60 +329,92 @@ COURSES.forEach(function(c){
 });
 
 /* ---------- files from storage ---------- */
+var PH=".emptyFolderPlaceholder";
 var cache={};
-function listDir(dir){
-  if(cache[dir]) return Promise.resolve(cache[dir]);
+function listDir(path){
+  if(cache[path]) return Promise.resolve(cache[path]);
   if(!sb) return Promise.reject(new Error("offline"));
-  return sb.storage.from(BUCKET).list(dir,{limit:1000,sortBy:{column:"name",order:"asc"}}).then(function(r){
+  return sb.storage.from(BUCKET).list(path,{limit:1000,sortBy:{column:"name",order:"asc"}}).then(function(r){
     if(r.error) throw r.error;
-    var out=(r.data||[]).filter(function(f){ return f.id && f.name!==".emptyFolderPlaceholder"; });
-    cache[dir]=out; return out;
+    var out={dirs:[],files:[]};
+    (r.data||[]).forEach(function(f){ if(f.name===PH) return; if(f.id) out.files.push(f); else out.dirs.push(f.name); });
+    cache[path]=out; return out;
   });
 }
-function pubUrl(dir,name){ return sb.storage.from(BUCKET).getPublicUrl(dir+"/"+name).data.publicUrl; }
-function fileRow(dir,f,showFolder){
-  var li=el("li","f"), a=el("a"); a.href=pubUrl(dir,f.name); a.target="_blank"; a.rel="noopener";
+// every file under a path, up to 4 levels deep: [[folderPath, file], ...]
+function walk(path,depth){
+  return listDir(path).then(function(l){
+    var here=l.files.map(function(f){ return [path,f]; });
+    if(depth<=0||!l.dirs.length) return here;
+    return Promise.all(l.dirs.map(function(d){ return walk(path+"/"+d,depth-1).catch(function(){return [];}); }))
+      .then(function(sub){ return here.concat.apply(here,sub); });
+  });
+}
+function pubUrl(path,name){ return sb.storage.from(BUCKET).getPublicUrl(path+"/"+name).data.publicUrl; }
+function pretty(path){ var p=path.split("/"), c=course(p[0]); return [c?c.name:p[0]].concat(p.slice(1)).join(" › "); }
+function folderRow(path,name){
+  var li=el("li","f"), a=el("a"); a.href="#"+encodeURI(path+"/"+name);
+  var ic=el("span","fico"); ic.innerHTML=folderSvg(course(path.split("/")[0]).tint); a.appendChild(ic);
+  var fn=el("span","fn"); fn.appendChild(el("b",null,name)); fn.appendChild(el("small",null,"Folder")); a.appendChild(fn);
+  li.appendChild(a);
+  var del=el("button","del","Delete"); del.type="button"; del.onclick=function(){ removeFolder(path,name,del); }; li.appendChild(del);
+  return li;
+}
+function fileRow(path,f,showFolder){
+  var li=el("li","f"), a=el("a"); a.href=pubUrl(path,f.name); a.target="_blank"; a.rel="noopener";
   var ext=(f.name.split(".").pop()||"").toLowerCase(); if(ext===f.name.toLowerCase()) ext="file";
   var b=el("span","badge",ext.slice(0,4)); b.style.background=EXT[ext]||"#8f9aa8"; a.appendChild(b);
   var fn=el("span","fn"), nm=el("b",null,f.name);
   var made=new Date(f.created_at||f.updated_at||0); if(Date.now()-made<3*864e5) nm.appendChild(el("span","new","NEW"));
   fn.appendChild(nm);
   var meta=[when(f.updated_at||f.created_at), size(f.metadata&&f.metadata.size)].filter(Boolean).join("  ·  ");
-  if(showFolder) meta=course(dir).name+"  ·  "+meta;
+  if(showFolder) meta=pretty(path)+"  ·  "+meta;
   fn.appendChild(el("small",null,meta)); a.appendChild(fn); li.appendChild(a);
   var del=el("button","del","Delete"); del.type="button";
-  del.onclick=function(){ removeFile(dir,f.name); }; li.appendChild(del);
+  del.onclick=function(){ removeFile(path,f.name,del); }; li.appendChild(del);
   return li;
 }
 
 /* ---------- routing ---------- */
 var current=null;
 function route(){
-  var dir=(location.hash||"").slice(1), c=course(dir);
-  current=c?dir:null;
+  var path=decodeURI((location.hash||"").slice(1)).replace(/^\/+|\/+$/g,""), c=course(path.split("/")[0]);
+  current=c?path:null;
   $("q").value="";
-  document.querySelectorAll("#sideCourses a").forEach(function(a){ a.classList.toggle("on",a.dataset.dir===current); });
+  var top=current?current.split("/")[0]:null;
+  document.querySelectorAll("#sideCourses a").forEach(function(a){ a.classList.toggle("on",a.dataset.dir===top); });
   $("sideHome").classList.toggle("on",!current);
   if(!c){
     fm.classList.remove("in-folder"); $("loc").textContent="Home"; document.title="Sophomore Materials";
     $("q").placeholder="Search folders and files";
     showHome(""); return;
   }
-  fm.classList.add("in-folder"); $("loc").textContent=c.name; document.title=c.name+" · Sophomore Materials";
-  $("q").placeholder="Search in "+c.name;
+  var name=current.split("/").pop(), here=current.indexOf("/")<0?c.name:name;
+  fm.classList.add("in-folder"); $("loc").textContent=pretty(current); document.title=here+" · Sophomore Materials";
+  $("q").placeholder="Search in "+here;
   renderFolder("");
 }
 function renderFolder(q){
-  var dir=current; files.textContent=""; files.appendChild(el("li","note","Loading…"));
-  listDir(dir).then(function(list){
-    if(dir!==current) return;
+  var path=current; files.textContent=""; files.appendChild(el("li","note","Loading…"));
+  var job=q?walk(path,3).then(function(all){ return {search:all}; }):listDir(path);
+  job.then(function(l){
+    if(path!==current) return;
     files.textContent="";
-    var hits=list.filter(function(f){ return !q||f.name.toLowerCase().indexOf(q)>=0; });
-    hits.sort(function(a,b){ return new Date(b.created_at)-new Date(a.created_at); });
-    hits.forEach(function(f){ files.appendChild(fileRow(dir,f,false)); });
-    if(!list.length) files.appendChild(el("li","note","Nothing here yet."));
-    else if(!hits.length) files.appendChild(el("li","note","No files match your search."));
-    countEl.textContent=q?(hits.length+" of "+list.length+" files"):(list.length+(list.length===1?" file":" files"));
+    if(l.search){
+      var hits=l.search.filter(function(p){ return p[1].name.toLowerCase().indexOf(q)>=0; });
+      hits.forEach(function(p){ files.appendChild(fileRow(p[0],p[1],p[0]!==path)); });
+      if(!hits.length) files.appendChild(el("li","note","No files match your search."));
+      countEl.textContent=hits.length+(hits.length===1?" file":" files")+" found";
+      return;
+    }
+    l.dirs.forEach(function(d){ files.appendChild(folderRow(path,d)); });
+    var fl=l.files.slice().sort(function(a,b){ return new Date(b.created_at)-new Date(a.created_at); });
+    fl.forEach(function(f){ files.appendChild(fileRow(path,f,false)); });
+    if(!l.dirs.length&&!fl.length) files.appendChild(el("li","note","Nothing here yet."));
+    var parts=[];
+    if(l.dirs.length) parts.push(l.dirs.length+(l.dirs.length===1?" folder":" folders"));
+    parts.push(fl.length+(fl.length===1?" file":" files"));
+    countEl.textContent=parts.join(", ");
   }).catch(function(){ files.textContent=""; files.appendChild(el("li","note","Couldn't load the files. Check your connection and refresh.")); });
 }
 function showHome(q){
@@ -380,8 +422,7 @@ function showHome(q){
   COURSES.forEach(function(c,i){ var hit=!q||c.name.toLowerCase().indexOf(q)>=0; if(hit) n++; items[i].style.display=hit?"":"none"; trs[i].style.display=hit?"":"none"; });
   files.textContent="";
   if(!q){ fm.classList.remove("in-folder"); $("empty").style.display="none"; countEl.textContent=COURSES.length+" folders"; return; }
-  // search files across all folders
-  Promise.all(COURSES.map(function(c){ return listDir(c.dir).then(function(l){ return l.map(function(f){return [c.dir,f];}); }).catch(function(){return [];}); }))
+  Promise.all(COURSES.map(function(c){ return walk(c.dir,3).catch(function(){return [];}); }))
   .then(function(all){
     if($("q").value.trim().toLowerCase()!==q||current) return;
     var hits=[].concat.apply([],all).filter(function(p){ return p[1].name.toLowerCase().indexOf(q)>=0; });
@@ -393,7 +434,7 @@ function showHome(q){
   });
 }
 $("q").addEventListener("input",function(){ var q=this.value.trim().toLowerCase(); if(current) renderFolder(q); else { files.style.display=""; showHome(q); } });
-$("back").onclick=function(){ location.hash=""; };
+$("back").onclick=function(){ var p=current?current.split("/"):[]; p.pop(); location.hash=p.length?encodeURI(p.join("/")):""; };
 $("sideHome").onclick=function(){ location.hash=""; };
 addEventListener("hashchange",route);
 
@@ -428,34 +469,60 @@ $("loginForm").addEventListener("submit",function(e){
     $("loginDlg").classList.remove("on"); toast("Check your email for the sign-in link.",6000);
   });
 });
-function cleanName(n){ return n.replace(/[^\w.\-() ]+/g,"_").replace(/_+/g,"_"); }
+function cleanName(n){ return n.replace(/[^\w.\-() ]+/g,"_").replace(/_+/g,"_").trim(); }
 function upload(list){
   if(!isAdmin||!current||!list.length) return;
-  var dir=current, done=0, failed=0, names=[];
+  var path=current, done=0, failed=0, names=[], top=path.split("/")[0], sub=path.split("/").slice(1).join("/");
   toast("Uploading "+list.length+(list.length===1?" file…":" files…"),60000);
   Promise.all([].map.call(list,function(f){
     var name=cleanName(f.name);
-    return sb.storage.from(BUCKET).upload(dir+"/"+name,f,{upsert:true,contentType:f.type||undefined}).then(function(r){
+    return sb.storage.from(BUCKET).upload(path+"/"+name,f,{upsert:true,contentType:f.type||undefined}).then(function(r){
       if(r.error){ failed++; return; } done++; names.push(name);
-      return sb.from("updates").insert({course:dir,file_name:name,action:"added"});
+      return sb.from("updates").insert({course:top,file_name:(sub?sub+"/":"")+name,action:"added"});
     });
   })).then(function(){
-    delete cache[dir]; if(current===dir) renderFolder("");
+    delete cache[path]; if(current===path) renderFolder("");
     toast(failed?(done+" uploaded, "+failed+" failed. Try the failed ones again."):(done===1?"Uploaded "+names[0]:"Uploaded "+done+" files"),5000);
   });
 }
-function removeFile(dir,name){
-  if(!isAdmin) return;
-  var li=[].filter.call(files.children,function(x){ return x.querySelector("b")&&x.querySelector("b").firstChild.nodeValue===name; })[0];
-  var b=li&&li.querySelector(".del");
-  if(b&&b.dataset.sure!=="1"){ b.dataset.sure="1"; b.textContent="Sure?"; setTimeout(function(){ b.dataset.sure=""; b.textContent="Delete"; },3000); return; }
-  sb.storage.from(BUCKET).remove([dir+"/"+name]).then(function(r){
+function sure(b){
+  if(b.dataset.sure==="1") return true;
+  var t=b.textContent; b.dataset.sure="1"; b.textContent="Sure?";
+  setTimeout(function(){ b.dataset.sure=""; b.textContent=t; },3000); return false;
+}
+function removeFile(path,name,b){
+  if(!isAdmin||!sure(b)) return;
+  sb.storage.from(BUCKET).remove([path+"/"+name]).then(function(r){
     if(r.error){ toast("Couldn't delete: "+r.error.message,6000); return; }
-    delete cache[dir]; if(current===dir) renderFolder(""); toast("Deleted "+name);
+    delete cache[path]; if(current===path) renderFolder(""); toast("Deleted "+name);
+  });
+}
+function removeFolder(path,name,b){
+  if(!isAdmin) return;
+  var full=path+"/"+name;
+  listDir(full).then(function(l){
+    if(l.dirs.length||l.files.length){ toast("Empty the folder "+name+" first, then delete it.",5000); return; }
+    if(!sure(b)) return;
+    sb.storage.from(BUCKET).remove([full+"/"+PH]).then(function(r){
+      if(r.error){ toast("Couldn't delete: "+r.error.message,6000); return; }
+      delete cache[path]; delete cache[full]; if(current===path) renderFolder(""); toast("Deleted folder "+name);
+    });
   });
 }
 $("upBtn").onclick=function(){ $("fileIn").click(); };
 $("fileIn").onchange=function(){ upload(this.files); this.value=""; };
+$("newBtn").onclick=function(){ $("folderDlg").classList.add("on"); $("folderName").value=""; $("folderName").focus(); };
+$("folderCancel").onclick=function(){ $("folderDlg").classList.remove("on"); };
+$("folderForm").addEventListener("submit",function(e){
+  e.preventDefault();
+  var name=cleanName($("folderName").value), path=current;
+  if(!name||!path){ return; }
+  var blank=new Blob([""],{type:"text/plain"});
+  sb.storage.from(BUCKET).upload(path+"/"+name+"/"+PH,blank,{upsert:true}).then(function(r){
+    if(r.error){ toast("Couldn't create the folder: "+r.error.message,6000); return; }
+    $("folderDlg").classList.remove("on"); delete cache[path]; if(current===path) renderFolder(""); toast("Created folder "+name);
+  });
+});
 view.addEventListener("dragover",function(e){ if(isAdmin&&current){ e.preventDefault(); view.classList.add("drop"); } });
 view.addEventListener("dragleave",function(){ view.classList.remove("drop"); });
 view.addEventListener("drop",function(e){ view.classList.remove("drop"); if(isAdmin&&current){ e.preventDefault(); upload(e.dataTransfer.files); } });
