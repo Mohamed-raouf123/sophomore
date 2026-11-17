@@ -248,16 +248,33 @@ a{color:var(--aqua)}
 /* opening a course */
 #grid .item.chosen{visibility:hidden}
 #zoomTile{position:fixed;z-index:40;pointer-events:none;transform-origin:0 0;filter:drop-shadow(0 30px 40px rgba(0,0,0,.55))}
-#zoomTile svg{width:100%;height:100%;display:block}
+#zoomTile{perspective:520px}
+#zoomTile .door{position:absolute;top:0;width:50%;height:100%;overflow:hidden;transform-style:preserve-3d}
+#zoomTile .dl{left:0;transform-origin:0 50%}
+#zoomTile .dr{right:0;transform-origin:100% 50%}
+#zoomTile .door svg{width:200%;height:100%;display:block}
+#zoomTile .dr svg{margin-left:-100%}
+#zoomTile .burst{position:absolute;left:50%;top:50%;width:50px;height:50px;margin:-25px;border-radius:50%;background:radial-gradient(circle,#fff 0,var(--tint) 35%,transparent 70%);opacity:0;transform:scale(0)}
+#zoomTile .spark{position:absolute;left:50%;top:50%;width:5px;height:5px;margin:-2.5px;border-radius:50%;background:var(--tint);box-shadow:0 0 6px var(--tint),0 0 2px #fff;opacity:0}
+#zoomTile.charge{filter:drop-shadow(0 0 18px var(--tint)) drop-shadow(0 30px 40px rgba(0,0,0,.55))}
+#zoomTile.open .dl{transform:rotateY(-112deg);opacity:0}
+#zoomTile.open .dr{transform:rotateY(112deg);opacity:0}
 @media (prefers-reduced-motion:no-preference){
   .grid .item{transition:transform .45s cubic-bezier(.2,.8,.2,1),opacity .3s}
   .grid.opening .item{opacity:0}
   .grid.opening .item.left{transform:translateX(-90px) scale(.85)}
   .grid.opening .item.right{transform:translateX(90px) scale(.85)}
-  #zoomTile{transition:transform .5s cubic-bezier(.2,.8,.2,1),opacity .3s}
+  #zoomTile{transition:transform .5s cubic-bezier(.2,.8,.2,1),opacity .3s,filter .25s}
+  #zoomTile .door{transition:transform .6s cubic-bezier(.55,0,.2,1),opacity .45s .2s}
+  #zoomTile.charge .door{animation:zCharge .26s ease-in-out}
+  #zoomTile.open .burst{animation:zBurst .65s ease-out forwards}
+  #zoomTile.open .spark{animation:zSpark .7s cubic-bezier(.2,.8,.3,1) forwards}
   .in-folder .files{animation:fIn .4s cubic-bezier(.2,.8,.2,1) both}
   .fm:not(.in-folder) .grid{animation:fIn .35s ease both}
 }
+@keyframes zCharge{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+@keyframes zBurst{0%{transform:scale(0);opacity:1}100%{transform:scale(9);opacity:0}}
+@keyframes zSpark{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(.3);opacity:0}}
 @keyframes fIn{from{opacity:0;transform:translateY(12px) scale(.98)}}
 
 /* boot */
@@ -524,7 +541,11 @@ grid.addEventListener("click",function(e){
   var a=e.target.closest("a.item"); if(!a||reduce||e.metaKey||e.ctrlKey||e.shiftKey||grid.classList.contains("opening")) return;
   e.preventDefault();
   var svg=a.querySelector("svg.tile"); svg.style.transition="none"; svg.style.transform="none"; var r=svg.getBoundingClientRect(), vr=view.getBoundingClientRect(); svg.style.transition=""; svg.style.transform="";
-  var wrap=el("div"); wrap.id="zoomTile"; wrap.appendChild(svg.cloneNode(true));
+  var c=course(a.getAttribute("href").slice(1)), wrap=el("div"); wrap.id="zoomTile"; wrap.style.setProperty("--tint",c?c.tint:"#f2b25a");
+  wrap.appendChild(el("div","burst"));
+  ["dl","dr"].forEach(function(k){ var d=el("div","door "+k); d.appendChild(svg.cloneNode(true)); wrap.appendChild(d); });
+  for(var i=0;i<16;i++){ var sp=el("i","spark"), ang=i/16*Math.PI*2+Math.random()*.3, dist=55+Math.random()*45;
+    sp.style.setProperty("--dx",(Math.cos(ang)*dist).toFixed(1)+"px"); sp.style.setProperty("--dy",(Math.sin(ang)*dist*.8).toFixed(1)+"px"); sp.style.animationDelay=(Math.random()*.08).toFixed(2)+"s"; wrap.appendChild(sp); }
   wrap.style.left=r.left+"px"; wrap.style.top=r.top+"px"; wrap.style.width=r.width+"px"; wrap.style.height=r.height+"px";
   document.body.appendChild(wrap);
   var ar=a.getBoundingClientRect(), cx=ar.left+ar.width/2;
@@ -535,8 +556,9 @@ grid.addEventListener("click",function(e){
   var tx=vr.left+vr.width/2-r.width*sc/2-r.left, ty=vr.top+vr.height/2-r.height*sc/2-r.top;
   wrap.getBoundingClientRect();
   wrap.style.transform="translate("+tx+"px,"+ty+"px) scale("+sc+")";
-  setTimeout(function(){ wrap.style.transform+=" scale(1.15)"; wrap.style.opacity="0"; location.hash=a.getAttribute("href").slice(1); },650);
-  setTimeout(function(){ wrap.remove(); grid.classList.remove("opening"); [].forEach.call(grid.children,function(it){ it.classList.remove("left","right","chosen"); }); },1000);
+  setTimeout(function(){ wrap.classList.add("charge"); },520);
+  setTimeout(function(){ wrap.classList.add("open"); location.hash=a.getAttribute("href").slice(1); },780);
+  setTimeout(function(){ wrap.remove(); grid.classList.remove("opening"); [].forEach.call(grid.children,function(it){ it.classList.remove("left","right","chosen"); }); },1500);
 });
 
 /* ---------- files from storage ---------- */
