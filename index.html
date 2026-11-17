@@ -161,6 +161,33 @@ a{color:var(--aqua)}
 .dlg button{border-radius:8px;padding:8px 14px;font:600 13px var(--ui);cursor:pointer;border:1px solid var(--line);background:none;color:var(--ink)}
 .dlg button.pri{background:var(--amber);color:#111;border:0}
 
+/* course emblems */
+.em{fill:none;stroke:rgba(16,20,28,.72);stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.em .glass{fill:rgba(255,255,255,0);transition:fill .25s}
+.em .led,.em .ball{fill:rgba(16,20,28,.72);transition:fill .25s}
+.em .n{fill:rgba(255,255,255,.7);transition:fill .25s}
+.em .gr{transform-box:fill-box;transform-origin:center}
+.item:hover .em .glass,.item:focus-visible .em .glass,.item:active .em .glass,.list a:hover .em .glass{fill:#fff4b8}
+.item:hover .em .led,.item:focus-visible .em .led,.item:active .em .led,.list a:hover .em .led{fill:#ff4d2e}
+@media (prefers-reduced-motion:no-preference){
+  .item:hover .em .rays,.item:focus-visible .em .rays,.item:active .em .rays,.list a:hover .em .rays{animation:emPulse .8s ease-in-out infinite alternate}
+  .item:hover .em-gate .in,.item:focus-visible .em-gate .in,.item:active .em-gate .in,.list a:hover .em-gate .in{stroke-dasharray:3 2.2;animation:emFlow .55s linear infinite}
+  .item:hover .em .bx,.item:focus-visible .em .bx,.item:active .em .bx,.list a:hover .em .bx{animation:emBx 1.1s linear infinite}
+  .item:hover .em .by,.item:focus-visible .em .by,.item:active .em .by,.list a:hover .em .by{animation:emBy 1.1s infinite}
+  .item:hover .em .wv,.item:focus-visible .em .wv,.item:active .em .wv,.list a:hover .em .wv{animation:emWave .9s linear infinite}
+  .item:hover .em .n,.item:focus-visible .em .n,.item:active .em .n,.list a:hover .em .n{animation:emNode 1.2s ease-in-out infinite}
+  .item:hover .em .n2,.item:focus-visible .em .n2,.item:active .em .n2,.list a:hover .em .n2{animation-delay:.2s}
+  .item:hover .em .n3,.item:focus-visible .em .n3,.item:active .em .n3,.list a:hover .em .n3{animation-delay:.4s}
+  .item:hover .em .gr,.item:focus-visible .em .gr,.item:active .em .gr,.list a:hover .em .gr{animation:emSpin 2.4s linear infinite}
+}
+@keyframes emPulse{from{opacity:.25}to{opacity:1}}
+@keyframes emFlow{to{stroke-dashoffset:-5.2}}
+@keyframes emBx{to{transform:translateX(26px)}}
+@keyframes emBy{0%{transform:translateY(0);animation-timing-function:cubic-bezier(.33,.66,.66,1)}50%{transform:translateY(-12.6px);animation-timing-function:cubic-bezier(.33,0,.66,.33)}100%{transform:translateY(0)}}
+@keyframes emWave{to{transform:translateX(-16px)}}
+@keyframes emNode{0%,100%{fill:rgba(255,255,255,.7)}35%{fill:#141a24}}
+@keyframes emSpin{to{transform:rotate(360deg)}}
+
 /* boot */
 #boot{position:fixed;inset:0;z-index:50;background:#07090d;font-family:var(--mono);font-size:13px;color:var(--dim);padding:24px;overflow:hidden;cursor:pointer}
 #boot .ok{color:var(--aqua)}#boot b{color:var(--ink)}
@@ -281,12 +308,12 @@ var SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSI
 var BUCKET = "materials";
 // Folders: dir is the storage folder name, name is what students see.
 var COURSES = [
-  {dir:"selected-topics", name:"Selected Topics",                               tint:"#ef7f78"},
-  {dir:"logic-design",    name:"Logic Design and Computer Organization",        tint:"#f2b25a"},
-  {dir:"dynamics",        name:"Dynamics",                                      tint:"#72d1bd"},
-  {dir:"diff-eq",         name:"Differential Equations and Numerical Analysis", tint:"#8db6ee"},
-  {dir:"data-structures", name:"Data Structures and Problem Solving",           tint:"#c69bf0"},
-  {dir:"software-eng",    name:"Advanced Software Engineering",                 tint:"#a8d47a"}
+  {dir:"selected-topics", name:"Selected Topics",                               tint:"#ef7f78", icon:"bulb"},
+  {dir:"logic-design",    name:"Logic Design and Computer Organization",        tint:"#f2b25a", icon:"gate"},
+  {dir:"dynamics",        name:"Dynamics",                                      tint:"#72d1bd", icon:"proj"},
+  {dir:"diff-eq",         name:"Differential Equations and Numerical Analysis", tint:"#8db6ee", icon:"wave"},
+  {dir:"data-structures", name:"Data Structures and Problem Solving",           tint:"#c69bf0", icon:"tree"},
+  {dir:"software-eng",    name:"Advanced Software Engineering",                 tint:"#a8d47a", icon:"gear"}
 ];
 // -------------------
 
@@ -294,13 +321,22 @@ var sb = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_K
 var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 function $(id){ return document.getElementById(id); }
 function el(t,c,x){ var e=document.createElement(t); if(c) e.className=c; if(x!=null) e.textContent=x; return e; }
-function folderSvg(tint){
+var EMB={
+  bulb:'<g class="em em-bulb"><path class="rays" d="M32 16.5v2.5M24.2 20.2l1.7 1.7M39.8 20.2l-1.7 1.7M21.5 28h2.4M40.1 28h2.4"/><path class="glass" d="M32 22a6 6 0 0 0-3.6 10.8V35.5h7.2v-2.7A6 6 0 0 0 32 22z"/><path d="M29.4 38.5h5.2M30.4 41.2h3.2"/></g>',
+  gate:'<g class="em em-gate"><path class="in" d="M17 27h9M17 35h9"/><path d="M26 23.5h6.5a7.5 7.5 0 0 1 0 15H26z"/><path class="in" d="M40 31h5"/><circle class="led" cx="47.2" cy="31" r="1.9"/></g>',
+  proj:'<g class="em em-proj"><path d="M19 41Q32 15 45 41" stroke-dasharray="1.5 3" opacity=".6"/><path d="M15 43.2h34"/><g class="bx"><g class="by"><circle class="ball" cx="19" cy="40.6" r="2.5"/></g></g></g>',
+  wave:'<g class="em em-wave"><path d="M17 31h30" opacity=".3"/><g clip-path="url(#emwave)"><path class="wv" d="M6 31c2.5-6.5 5.5-6.5 8 0s5.5 6.5 8 0 5.5-6.5 8 0 5.5 6.5 8 0 5.5-6.5 8 0 5.5 6.5 8 0 5.5-6.5 8 0"/></g></g>',
+  tree:'<g class="em em-tree"><path d="M32 22l-8 9.5M32 22l8 9.5M24 31.5l-4 8M24 31.5l4 8M40 31.5l-4 8M40 31.5l4 8"/><circle class="n n1" cx="32" cy="21.5" r="2.7"/><circle class="n n2" cx="24" cy="31.5" r="2.6"/><circle class="n n2" cx="40" cy="31.5" r="2.6"/><circle class="n n3" cx="20" cy="39.5" r="2.3"/><circle class="n n3" cx="28" cy="39.5" r="2.3"/><circle class="n n3" cx="36" cy="39.5" r="2.3"/><circle class="n n3" cx="44" cy="39.5" r="2.3"/></g>',
+  gear:'<g class="em em-gear"><g class="gr"><path d="M32 20.6v3.2M32 38.2v3.2M21.6 31h3.2M39.2 31h3.2M24.6 23.6l2.3 2.3M37.1 36.1l2.3 2.3M39.4 23.6l-2.3 2.3M26.9 36.1l-2.3 2.3" stroke-width="3.2"/><circle cx="32" cy="31" r="6.6"/><circle cx="32" cy="31" r="2.4"/></g></g>'
+};
+function folderSvg(tint,icon){
   var id="fg"+tint.slice(1), back="M4 9a5 5 0 0 1 5-5h14l6 6h26a5 5 0 0 1 5 5v28a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z", front="M4 19a5 5 0 0 1 5-5h46a5 5 0 0 1 5 5v24a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z";
   return '<svg viewBox="0 0 64 52" aria-hidden="true"><defs>'+
+    (icon==="wave"?'<clipPath id="emwave"><rect x="17" y="20" width="30" height="22"/></clipPath>':'')+
     '<linearGradient id="'+id+'s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".38"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".22"/></linearGradient></defs>'+
     '<path d="'+back+'" fill="'+tint+'"/><path d="'+back+'" fill="#000" opacity=".3"/>'+
     '<g class="sheet"><rect x="11" y="9" width="42" height="28" rx="2" fill="#f3efe6"/><rect x="16" y="14" width="22" height="2" rx="1" fill="#cfc8b9"/><rect x="16" y="19" width="30" height="2" rx="1" fill="#cfc8b9"/></g>'+
-    '<g class="front"><path d="'+front+'" fill="'+tint+'"/><path d="'+front+'" fill="url(#'+id+'s)"/><path d="M8 14.7h48" stroke="#fff" stroke-opacity=".55" stroke-width="1.1" stroke-linecap="round"/></g></svg>';
+    '<g class="front"><path d="'+front+'" fill="'+tint+'"/><path d="'+front+'" fill="url(#'+id+'s)"/><path d="M8 14.7h48" stroke="#fff" stroke-opacity=".55" stroke-width="1.1" stroke-linecap="round"/>'+(icon&&EMB[icon]?EMB[icon]:'')+'</g></svg>';
 }
 function byName(a,b){ return a.localeCompare(b,undefined,{numeric:true,sensitivity:"base"}); }
 function term(n){ n=n.toLowerCase(); if(/(^|[^a-z])(fall|autumn)/.test(n)) return 0; if(/(^|[^a-z])spring/.test(n)) return 1; if(/(^|[^a-z])summer/.test(n)) return 2; return 3; }
@@ -347,8 +383,8 @@ var EXT={pdf:"#ef7f78",ppt:"#f2b25a",pptx:"#f2b25a",doc:"#8db6ee",docx:"#8db6ee"
 /* ---------- home: folders ---------- */
 var grid=$("grid"), rows=$("rows"), sideC=$("sideCourses"), view=$("view"), files=$("files"), fm=document.querySelector(".fm"), countEl=$("count");
 COURSES.forEach(function(c){
-  var a=el("a","item"); a.href="#"+c.dir; a.innerHTML=folderSvg(c.tint); a.appendChild(el("span","n",c.name)); grid.appendChild(a);
-  var tr=el("tr"), td=el("td"), la=el("a"); la.href="#"+c.dir; la.innerHTML=folderSvg(c.tint); la.appendChild(document.createTextNode(c.name));
+  var a=el("a","item"); a.href="#"+c.dir; a.innerHTML=folderSvg(c.tint,c.icon); a.appendChild(el("span","n",c.name)); grid.appendChild(a);
+  var tr=el("tr"), td=el("td"), la=el("a"); la.href="#"+c.dir; la.innerHTML=folderSvg(c.tint,c.icon); la.appendChild(document.createTextNode(c.name));
   td.appendChild(la); tr.appendChild(td); rows.appendChild(tr);
   var s=el("a"); s.href="#"+c.dir; s.dataset.dir=c.dir; var sw=el("span","sw"); sw.style.background=c.tint; s.appendChild(sw); s.appendChild(el("span","lbl",c.name)); s.title=c.name;
   sideC.appendChild(s);
