@@ -201,7 +201,7 @@ a{color:var(--aqua)}
 .tile .ball{fill:rgba(14,18,26,.85)}
 .tile .sk,.tile .fl,.tile .ly,.tile .gr2{transform-box:view-box}
 .tile .sk{transform-origin:60px 46px}
-.tile .fl{transform-origin:60px 56px;opacity:0;transform:scale(.25) rotate(-120deg)}
+.tile .eye{fill:#141a24;transition:fill .25s}
 .tile .gr2{transform-origin:98px 24px}
 .fico{width:38px;height:38px}
 .fico svg.sub{width:34px;height:34px;filter:drop-shadow(0 3px 5px rgba(0,0,0,.35))}
@@ -212,38 +212,53 @@ a{color:var(--aqua)}
   .item svg.tile{transition:transform .35s cubic-bezier(.2,.8,.2,1),filter .35s}
   .item:hover svg.tile,.item:focus-visible svg.tile{transform:perspective(420px) rotateX(10deg) translateY(-4px);filter:drop-shadow(0 18px 18px rgba(0,0,0,.5))}
   .tile .sk{transition:transform .35s ease,opacity .3s}
-  .tile .fl{transition:transform .6s cubic-bezier(.3,1.5,.5,1) .12s,opacity .3s .12s}
+  .item:hover .tile .sk,.item:focus-visible .tile .sk,.item:active .tile .sk,#zoomTile .tile .sk,.list a:hover .tile .sk{animation:tShake .5s ease-in-out infinite}
   .tile .ly{transition:transform .4s cubic-bezier(.2,.8,.2,1)}
-  .item:hover .tile .pin,.item:focus-visible .tile .pin,.item:active .tile .pin,.list a:hover .tile .pin{animation:tPin .55s cubic-bezier(.3,1.6,.5,1) both}
-  .item:hover .tile .p2,.item:focus-visible .tile .p2,.item:active .tile .p2,.list a:hover .tile .p2{animation-delay:.15s}
-  .item:hover .tile .p3,.item:focus-visible .tile .p3,.item:active .tile .p3,.list a:hover .tile .p3{animation-delay:.3s}
-  .item:hover .tile .route,.item:focus-visible .tile .route,.item:active .tile .route,.list a:hover .tile .route{animation:tDash .7s linear infinite}
-  .item:hover .tile .pwr,.item:focus-visible .tile .pwr,.item:active .tile .pwr,.list a:hover .tile .pwr{opacity:1;animation:tDash .4s linear infinite}
-  .item:hover .tile .tr,.item:focus-visible .tile .tr,.item:active .tile .tr,.list a:hover .tile .tr{stroke-dasharray:4 3;animation:tDash .5s linear infinite}
-  .item:hover .tile .core,.item:focus-visible .tile .core,.item:active .tile .core,.list a:hover .tile .core{animation:tCore 1s ease-in-out infinite}
-  .item:hover .tile .c2,.item:focus-visible .tile .c2,.item:active .tile .c2,.list a:hover .tile .c2{animation-delay:.12s}
-  .item:hover .tile .c3,.item:focus-visible .tile .c3,.item:active .tile .c3,.list a:hover .tile .c3{animation-delay:.24s}
-  .item:hover .tile .c4,.item:focus-visible .tile .c4,.item:active .tile .c4,.list a:hover .tile .c4{animation-delay:.36s}
-  .item:hover .tile .bx,.item:focus-visible .tile .bx,.item:active .tile .bx,.list a:hover .tile .bx{animation:tBx 1.3s linear infinite}
-  .item:hover .tile .by,.item:focus-visible .tile .by,.item:active .tile .by,.list a:hover .tile .by{animation:tBy 1.3s infinite}
-  .item:hover .tile .sq,.item:focus-visible .tile .sq,.item:active .tile .sq,.list a:hover .tile .sq{animation:tNode 1.8s ease-in-out infinite}
-  .item:hover .tile .l2,.item:focus-visible .tile .l2,.item:active .tile .l2,.list a:hover .tile .l2{animation-delay:.15s}
-  .item:hover .tile .l3,.item:focus-visible .tile .l3,.item:active .tile .l3,.list a:hover .tile .l3{animation-delay:.3s}
-  .item:hover .tile .t1,.item:focus-visible .tile .t1,.item:active .tile .t1,.list a:hover .tile .t1{animation-delay:.45s}
-  .item:hover .tile .t2,.item:focus-visible .tile .t2,.item:active .tile .t2,.list a:hover .tile .t2{animation-delay:.6s}
-  .item:hover .tile .t3,.item:focus-visible .tile .t3,.item:active .tile .t3,.list a:hover .tile .t3{animation-delay:.75s}
-  .item:hover .tile .gr2,.item:focus-visible .tile .gr2,.item:active .tile .gr2,.list a:hover .tile .gr2{animation:emSpin 2.4s linear infinite}
+  .item:hover .tile .pin,.item:focus-visible .tile .pin,.item:active .tile .pin,#zoomTile .tile .pin,.list a:hover .tile .pin{animation:tPin .55s cubic-bezier(.3,1.6,.5,1) both}
+  .item:hover .tile .p2,.item:focus-visible .tile .p2,.item:active .tile .p2,#zoomTile .tile .p2,.list a:hover .tile .p2{animation-delay:.15s}
+  .item:hover .tile .p3,.item:focus-visible .tile .p3,.item:active .tile .p3,#zoomTile .tile .p3,.list a:hover .tile .p3{animation-delay:.3s}
+  .item:hover .tile .route,.item:focus-visible .tile .route,.item:active .tile .route,#zoomTile .tile .route,.list a:hover .tile .route{animation:tDash .7s linear infinite}
+  .item:hover .tile .pwr,.item:focus-visible .tile .pwr,.item:active .tile .pwr,#zoomTile .tile .pwr,.list a:hover .tile .pwr{opacity:1;animation:tDash .4s linear infinite}
+  .item:hover .tile .tr,.item:focus-visible .tile .tr,.item:active .tile .tr,#zoomTile .tile .tr,.list a:hover .tile .tr{stroke-dasharray:4 3;animation:tDash .5s linear infinite}
+  .item:hover .tile .core,.item:focus-visible .tile .core,.item:active .tile .core,#zoomTile .tile .core,.list a:hover .tile .core{animation:tCore 1s ease-in-out infinite}
+  .item:hover .tile .c2,.item:focus-visible .tile .c2,.item:active .tile .c2,#zoomTile .tile .c2,.list a:hover .tile .c2{animation-delay:.12s}
+  .item:hover .tile .c3,.item:focus-visible .tile .c3,.item:active .tile .c3,#zoomTile .tile .c3,.list a:hover .tile .c3{animation-delay:.24s}
+  .item:hover .tile .c4,.item:focus-visible .tile .c4,.item:active .tile .c4,#zoomTile .tile .c4,.list a:hover .tile .c4{animation-delay:.36s}
+  .item:hover .tile .bx,.item:focus-visible .tile .bx,.item:active .tile .bx,#zoomTile .tile .bx,.list a:hover .tile .bx{animation:tBx 1.3s linear infinite}
+  .item:hover .tile .by,.item:focus-visible .tile .by,.item:active .tile .by,#zoomTile .tile .by,.list a:hover .tile .by{animation:tBy 1.3s infinite}
+  .item:hover .tile .sq,.item:focus-visible .tile .sq,.item:active .tile .sq,#zoomTile .tile .sq,.list a:hover .tile .sq{animation:tNode 1.8s ease-in-out infinite}
+  .item:hover .tile .l2,.item:focus-visible .tile .l2,.item:active .tile .l2,#zoomTile .tile .l2,.list a:hover .tile .l2{animation-delay:.15s}
+  .item:hover .tile .l3,.item:focus-visible .tile .l3,.item:active .tile .l3,#zoomTile .tile .l3,.list a:hover .tile .l3{animation-delay:.3s}
+  .item:hover .tile .t1,.item:focus-visible .tile .t1,.item:active .tile .t1,#zoomTile .tile .t1,.list a:hover .tile .t1{animation-delay:.45s}
+  .item:hover .tile .t2,.item:focus-visible .tile .t2,.item:active .tile .t2,#zoomTile .tile .t2,.list a:hover .tile .t2{animation-delay:.6s}
+  .item:hover .tile .t3,.item:focus-visible .tile .t3,.item:active .tile .t3,#zoomTile .tile .t3,.list a:hover .tile .t3{animation-delay:.75s}
+  .item:hover .tile .gr2,.item:focus-visible .tile .gr2,.item:active .tile .gr2,#zoomTile .tile .gr2,.list a:hover .tile .gr2{animation:emSpin 2.4s linear infinite}
 }
-.item:hover .tile .sk,.item:focus-visible .tile .sk,.item:active .tile .sk,.list a:hover .tile .sk{opacity:0;transform:scale(.45) rotate(25deg)}
-.item:hover .tile .fl,.item:focus-visible .tile .fl,.item:active .tile .fl,.list a:hover .tile .fl{opacity:1;transform:none}
-.item:hover .tile .ly1,.item:focus-visible .tile .ly1,.item:active .tile .ly1,.list a:hover .tile .ly1{transform:translateY(-8px)}
-.item:hover .tile .ly3,.item:focus-visible .tile .ly3,.item:active .tile .ly3,.list a:hover .tile .ly3{transform:translateY(8px)}
+.item:hover .tile .eye,.item:focus-visible .tile .eye,.item:active .tile .eye,#zoomTile .tile .eye,.list a:hover .tile .eye{fill:#ff3b1f;filter:drop-shadow(0 0 3px #ff3b1f)}
+.item:hover .tile .ly1,.item:focus-visible .tile .ly1,.item:active .tile .ly1,#zoomTile .tile .ly1,.list a:hover .tile .ly1{transform:translateY(-11px)}
+.item:hover .tile .ly3,.item:focus-visible .tile .ly3,.item:active .tile .ly3,#zoomTile .tile .ly3,.list a:hover .tile .ly3{transform:translateY(11px)}
 @keyframes tPin{from{transform:translateY(-16px);opacity:0}to{transform:none;opacity:1}}
 @keyframes tDash{to{stroke-dashoffset:-12}}
 @keyframes tCore{0%,100%{fill:rgba(255,255,255,.62)}40%{fill:#ffe066}}
 @keyframes tBx{to{transform:translateX(72px)}}
 @keyframes tBy{0%{transform:translateY(0);animation-timing-function:cubic-bezier(.33,.66,.66,1)}50%{transform:translateY(-38px);animation-timing-function:cubic-bezier(.33,0,.66,.33)}100%{transform:translateY(0)}}
+@keyframes tShake{0%,100%{transform:rotate(0)}25%{transform:rotate(-6deg)}75%{transform:rotate(6deg)}}
 @keyframes tNode{0%,100%{fill:rgba(255,255,255,.62)}30%{fill:#141a24}}
+
+/* opening a course */
+#grid .item.chosen{visibility:hidden}
+#zoomTile{position:fixed;z-index:40;pointer-events:none;transform-origin:0 0;filter:drop-shadow(0 30px 40px rgba(0,0,0,.55))}
+#zoomTile svg{width:100%;height:100%;display:block}
+@media (prefers-reduced-motion:no-preference){
+  .grid .item{transition:transform .45s cubic-bezier(.2,.8,.2,1),opacity .3s}
+  .grid.opening .item{opacity:0}
+  .grid.opening .item.left{transform:translateX(-90px) scale(.85)}
+  .grid.opening .item.right{transform:translateX(90px) scale(.85)}
+  #zoomTile{transition:transform .5s cubic-bezier(.2,.8,.2,1),opacity .3s}
+  .in-folder .files{animation:fIn .4s cubic-bezier(.2,.8,.2,1) both}
+  .fm:not(.in-folder) .grid{animation:fIn .35s ease both}
+}
+@keyframes fIn{from{opacity:0;transform:translateY(12px) scale(.98)}}
 
 /* boot */
 #boot{position:fixed;inset:0;z-index:50;background:#07090d;font-family:var(--mono);font-size:13px;color:var(--dim);padding:24px;overflow:hidden;cursor:pointer}
@@ -387,14 +402,11 @@ var TILES={
        '<g transform="translate(44 38)"><g class="pin p1">'+PIN+'</g></g><g transform="translate(70 54)"><g class="pin p2">'+PIN+'</g></g><g transform="translate(52 66)"><g class="pin p3">'+PIN+'</g></g>',
   cpu:'<g class="k"><path class="tr" d="M10 36h26M10 48h26M10 60h26M110 36H84M110 48H84M110 60H84M44 10v18M60 10v18M76 10v18M44 86V68M60 86V68M76 86V68"/><rect class="w" x="36" y="28" width="48" height="40" rx="6"/><rect class="core c1" x="42" y="34" width="16" height="12" rx="2"/><rect class="core c2" x="62" y="34" width="16" height="12" rx="2"/><rect class="core c3" x="42" y="50" width="16" height="12" rx="2"/><rect class="core c4" x="62" y="50" width="16" height="12" rx="2"/></g>',
   proj:'<g class="k"><path d="M14 76h92"/><path d="M24 72Q60 -8 96 72" stroke-dasharray="2 4" opacity=".6"/><path class="w" d="M16 76l9-11 4 3-7 8z"/><g class="bx"><g class="by"><circle class="ball" cx="24" cy="70" r="4.6"/></g></g></g>',
-  skull:'<g class="k"><g class="sk"><path class="w" d="M60 20c-14 0-24 9-24 22 0 8 4 13 9 16v8a3 3 0 0 0 3 3h24a3 3 0 0 0 3-3v-8c5-3 9-8 9-16 0-13-10-22-24-22z"/><ellipse cx="51" cy="43" rx="5.5" ry="6" fill="#141a24"/><ellipse cx="69" cy="43" rx="5.5" ry="6" fill="#141a24"/><path d="M60 50l-3 6h6z" fill="#141a24"/><path d="M53 69v-6M60 69v-6M67 69v-6"/></g>'+
-        '<g class="fl"><path d="M60 86V58" stroke="#2f7a3a" stroke-width="3"/><path d="M60 74c-9-1-13-6-13-11 7 0 12 4 13 11z" fill="#4caf50" stroke="#2f7a3a"/><g class="pt"><ellipse cx="60" cy="31" rx="6.5" ry="11" fill="#fff"/><ellipse cx="60" cy="31" rx="6.5" ry="11" fill="#fff" transform="rotate(60 60 44)"/><ellipse cx="60" cy="31" rx="6.5" ry="11" fill="#fff" transform="rotate(120 60 44)"/><ellipse cx="60" cy="31" rx="6.5" ry="11" fill="#fff" transform="rotate(180 60 44)"/><ellipse cx="60" cy="31" rx="6.5" ry="11" fill="#fff" transform="rotate(240 60 44)"/><ellipse cx="60" cy="31" rx="6.5" ry="11" fill="#fff" transform="rotate(300 60 44)"/></g><circle cx="60" cy="44" r="6.5" fill="#ffd34d"/></g></g>',
+  skull:'<g class="k"><g class="sk"><path class="w" d="M60 18c-15 0-26 10-26 24 0 9 4 14 10 17v9a3 3 0 0 0 3 3h26a3 3 0 0 0 3-3v-9c6-3 10-8 10-17 0-14-11-24-26-24z"/><ellipse class="eye" cx="50.5" cy="43" rx="6" ry="6.5"/><ellipse class="eye" cx="69.5" cy="43" rx="6" ry="6.5"/><path d="M60 51l-3.4 6.5h6.8z" fill="#141a24"/><path d="M52 71v-6.5M60 71v-6.5M68 71v-6.5"/></g></g>',
   tree:'<g class="k"><g opacity=".45"><path d="M20 64l18-8M20 64l14 14M38 56l14 14M34 78l18-8"/><circle class="w" cx="20" cy="64" r="3.4"/><circle class="w" cx="38" cy="56" r="3.4"/><circle class="w" cx="34" cy="78" r="3.4"/><circle class="w" cx="52" cy="70" r="3.4"/></g>'+
        '<rect class="sq l1" x="10" y="18" width="18" height="13" rx="3"/><path d="M28 24.5h6"/><rect class="sq l2" x="34" y="18" width="18" height="13" rx="3"/><path d="M52 24.5h6"/><rect class="sq l3" x="58" y="18" width="18" height="13" rx="3"/><path d="M76 24.5c8 0 12 4 12 11"/>'+
        '<path d="M88 40l-12 16M88 40l12 16M76 56l-6 16M76 56l6 16M100 56l-6 16M100 56l6 16"/><circle class="sq t1" cx="88" cy="40" r="4.6"/><circle class="sq t2" cx="76" cy="56" r="4.2"/><circle class="sq t2" cx="100" cy="56" r="4.2"/><circle class="sq t3" cx="70" cy="73" r="3.6"/><circle class="sq t3" cx="82" cy="73" r="3.6"/><circle class="sq t3" cx="94" cy="73" r="3.6"/><circle class="sq t3" cx="106" cy="73" r="3.6"/></g>',
-  layers:'<g class="k"><rect class="w" x="12" y="14" width="24" height="18" rx="2"/><path d="M12 20h24M12 26h24"/><path d="M36 23h8" stroke-dasharray="2 2"/>'+
-       '<g class="ly ly3"><path class="w" d="M60 60l30 10-30 10-30-10z" opacity=".7"/></g><g class="ly ly2"><path class="w" d="M60 46l30 10-30 10-30-10z" opacity=".85"/></g><g class="ly ly1"><path class="w" d="M60 32l30 10-30 10-30-10z"/><path d="M50 42h8M60 44h10"/></g>'+
-       '<g class="gr2"><path d="M98 14v4M98 30v4M88 24h4M104 24h4M90.9 16.9l2.8 2.8M102.3 28.3l2.8 2.8M105.1 16.9l-2.8 2.8M93.7 28.3l-2.8 2.8" stroke-width="3.4"/><circle class="w" cx="98" cy="24" r="5.6"/><circle cx="98" cy="24" r="1.8"/></g></g>'
+  layers:'<g class="k"><g class="ly ly3"><path class="w" d="M60 60l38 13-38 13-38-13z" opacity=".7"/><path d="M44 73h10M58 75h14" opacity=".7"/></g><g class="ly ly2"><path class="w" d="M60 43l38 13-38 13-38-13z" opacity=".85"/><circle cx="52" cy="56" r="2.4"/><circle cx="68" cy="56" r="2.4"/><path d="M54.4 56h11.2"/></g><g class="ly ly1"><path class="w" d="M60 26l38 13-38 13-38-13z"/><path d="M44 39h12M60 41h16M52 35h8"/></g></g>'
 };
 function tileSvg(c){
   var id="t"+c.dir.replace(/[^a-z]/g,"");
@@ -505,6 +517,26 @@ COURSES.forEach(function(c){
   td.appendChild(la); tr.appendChild(td); rows.appendChild(tr);
   var s=el("a"); s.href="#"+c.dir; s.dataset.dir=c.dir; var sw=el("span","sw"); sw.style.background=c.tint; s.appendChild(sw); s.appendChild(el("span","lbl",c.name)); s.title=c.name;
   sideC.appendChild(s);
+});
+
+/* ---------- opening a course ---------- */
+grid.addEventListener("click",function(e){
+  var a=e.target.closest("a.item"); if(!a||reduce||e.metaKey||e.ctrlKey||e.shiftKey||grid.classList.contains("opening")) return;
+  e.preventDefault();
+  var svg=a.querySelector("svg.tile"); svg.style.transition="none"; svg.style.transform="none"; var r=svg.getBoundingClientRect(), vr=view.getBoundingClientRect(); svg.style.transition=""; svg.style.transform="";
+  var wrap=el("div"); wrap.id="zoomTile"; wrap.appendChild(svg.cloneNode(true));
+  wrap.style.left=r.left+"px"; wrap.style.top=r.top+"px"; wrap.style.width=r.width+"px"; wrap.style.height=r.height+"px";
+  document.body.appendChild(wrap);
+  var ar=a.getBoundingClientRect(), cx=ar.left+ar.width/2;
+  a.classList.add("chosen"); a.blur();
+  [].forEach.call(grid.children,function(it){ if(it===a) return; var ir=it.getBoundingClientRect(); it.classList.add(ir.left+ir.width/2<cx?"left":"right"); });
+  grid.classList.add("opening");
+  var sc=Math.min(vr.width*.42/r.width, vr.height*.55/r.height);
+  var tx=vr.left+vr.width/2-r.width*sc/2-r.left, ty=vr.top+vr.height/2-r.height*sc/2-r.top;
+  wrap.getBoundingClientRect();
+  wrap.style.transform="translate("+tx+"px,"+ty+"px) scale("+sc+")";
+  setTimeout(function(){ wrap.style.transform+=" scale(1.15)"; wrap.style.opacity="0"; location.hash=a.getAttribute("href").slice(1); },650);
+  setTimeout(function(){ wrap.remove(); grid.classList.remove("opening"); [].forEach.call(grid.children,function(it){ it.classList.remove("left","right","chosen"); }); },1000);
 });
 
 /* ---------- files from storage ---------- */
