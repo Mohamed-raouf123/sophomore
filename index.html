@@ -101,7 +101,7 @@ a{color:var(--aqua)}
 .vbtn svg{width:15px;height:15px}
 .in-folder .vbtn{display:none}
 .view{flex:1;min-height:0;overflow:auto;padding:16px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(138px,1fr));gap:8px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
 .item{display:grid;justify-items:center;align-content:start;gap:10px;padding:16px 8px 12px;border-radius:10px;text-decoration:none;color:var(--ink);text-align:center;border:1px solid transparent}
 .item:hover{background:rgba(255,255,255,.06);border-color:var(--line)}
 .item:hover svg{transform:translateY(-2px)}
@@ -188,6 +188,63 @@ a{color:var(--aqua)}
 @keyframes emNode{0%,100%{fill:rgba(255,255,255,.7)}35%{fill:#141a24}}
 @keyframes emSpin{to{transform:rotate(360deg)}}
 
+/* course tiles */
+.item svg.tile{width:122px;height:98px;filter:drop-shadow(0 10px 14px rgba(0,0,0,.45));transform-origin:50% 100%}
+.list a svg.tile{width:30px;height:24px;filter:none}
+.tile .k{fill:none;stroke:rgba(14,18,26,.8);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.tile .w{fill:rgba(255,255,255,.88)}
+.tile .w2{fill:rgba(255,255,255,.5)}
+.tile .pinb{fill:#e5484d;stroke:rgba(14,18,26,.85);stroke-width:1.6}
+.tile .route{stroke-dasharray:3 3;opacity:.8}
+.tile .pwr{stroke:#ffd34d;stroke-width:1.6;stroke-dasharray:1 3;opacity:.0}
+.tile .core,.tile .sq{fill:rgba(255,255,255,.62)}
+.tile .ball{fill:rgba(14,18,26,.85)}
+.tile .sk,.tile .fl,.tile .ly,.tile .gr2{transform-box:view-box}
+.tile .sk{transform-origin:60px 46px}
+.tile .fl{transform-origin:60px 56px;opacity:0;transform:scale(.25) rotate(-120deg)}
+.tile .gr2{transform-origin:98px 24px}
+.fico{width:38px;height:38px}
+.fico svg.sub{width:34px;height:34px;filter:drop-shadow(0 3px 5px rgba(0,0,0,.35))}
+.win{--accent:transparent}
+.bar{box-shadow:inset 0 1px 0 rgba(255,255,255,.09),inset 0 -2px 0 var(--accent)}
+.loc .dot{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:8px;vertical-align:0}
+@media (prefers-reduced-motion:no-preference){
+  .item svg.tile{transition:transform .35s cubic-bezier(.2,.8,.2,1),filter .35s}
+  .item:hover svg.tile,.item:focus-visible svg.tile{transform:perspective(420px) rotateX(10deg) translateY(-4px);filter:drop-shadow(0 18px 18px rgba(0,0,0,.5))}
+  .tile .sk{transition:transform .35s ease,opacity .3s}
+  .tile .fl{transition:transform .6s cubic-bezier(.3,1.5,.5,1) .12s,opacity .3s .12s}
+  .tile .ly{transition:transform .4s cubic-bezier(.2,.8,.2,1)}
+  .item:hover .tile .pin,.item:focus-visible .tile .pin,.item:active .tile .pin,.list a:hover .tile .pin{animation:tPin .55s cubic-bezier(.3,1.6,.5,1) both}
+  .item:hover .tile .p2,.item:focus-visible .tile .p2,.item:active .tile .p2,.list a:hover .tile .p2{animation-delay:.15s}
+  .item:hover .tile .p3,.item:focus-visible .tile .p3,.item:active .tile .p3,.list a:hover .tile .p3{animation-delay:.3s}
+  .item:hover .tile .route,.item:focus-visible .tile .route,.item:active .tile .route,.list a:hover .tile .route{animation:tDash .7s linear infinite}
+  .item:hover .tile .pwr,.item:focus-visible .tile .pwr,.item:active .tile .pwr,.list a:hover .tile .pwr{opacity:1;animation:tDash .4s linear infinite}
+  .item:hover .tile .tr,.item:focus-visible .tile .tr,.item:active .tile .tr,.list a:hover .tile .tr{stroke-dasharray:4 3;animation:tDash .5s linear infinite}
+  .item:hover .tile .core,.item:focus-visible .tile .core,.item:active .tile .core,.list a:hover .tile .core{animation:tCore 1s ease-in-out infinite}
+  .item:hover .tile .c2,.item:focus-visible .tile .c2,.item:active .tile .c2,.list a:hover .tile .c2{animation-delay:.12s}
+  .item:hover .tile .c3,.item:focus-visible .tile .c3,.item:active .tile .c3,.list a:hover .tile .c3{animation-delay:.24s}
+  .item:hover .tile .c4,.item:focus-visible .tile .c4,.item:active .tile .c4,.list a:hover .tile .c4{animation-delay:.36s}
+  .item:hover .tile .bx,.item:focus-visible .tile .bx,.item:active .tile .bx,.list a:hover .tile .bx{animation:tBx 1.3s linear infinite}
+  .item:hover .tile .by,.item:focus-visible .tile .by,.item:active .tile .by,.list a:hover .tile .by{animation:tBy 1.3s infinite}
+  .item:hover .tile .sq,.item:focus-visible .tile .sq,.item:active .tile .sq,.list a:hover .tile .sq{animation:tNode 1.8s ease-in-out infinite}
+  .item:hover .tile .l2,.item:focus-visible .tile .l2,.item:active .tile .l2,.list a:hover .tile .l2{animation-delay:.15s}
+  .item:hover .tile .l3,.item:focus-visible .tile .l3,.item:active .tile .l3,.list a:hover .tile .l3{animation-delay:.3s}
+  .item:hover .tile .t1,.item:focus-visible .tile .t1,.item:active .tile .t1,.list a:hover .tile .t1{animation-delay:.45s}
+  .item:hover .tile .t2,.item:focus-visible .tile .t2,.item:active .tile .t2,.list a:hover .tile .t2{animation-delay:.6s}
+  .item:hover .tile .t3,.item:focus-visible .tile .t3,.item:active .tile .t3,.list a:hover .tile .t3{animation-delay:.75s}
+  .item:hover .tile .gr2,.item:focus-visible .tile .gr2,.item:active .tile .gr2,.list a:hover .tile .gr2{animation:emSpin 2.4s linear infinite}
+}
+.item:hover .tile .sk,.item:focus-visible .tile .sk,.item:active .tile .sk,.list a:hover .tile .sk{opacity:0;transform:scale(.45) rotate(25deg)}
+.item:hover .tile .fl,.item:focus-visible .tile .fl,.item:active .tile .fl,.list a:hover .tile .fl{opacity:1;transform:none}
+.item:hover .tile .ly1,.item:focus-visible .tile .ly1,.item:active .tile .ly1,.list a:hover .tile .ly1{transform:translateY(-8px)}
+.item:hover .tile .ly3,.item:focus-visible .tile .ly3,.item:active .tile .ly3,.list a:hover .tile .ly3{transform:translateY(8px)}
+@keyframes tPin{from{transform:translateY(-16px);opacity:0}to{transform:none;opacity:1}}
+@keyframes tDash{to{stroke-dashoffset:-12}}
+@keyframes tCore{0%,100%{fill:rgba(255,255,255,.62)}40%{fill:#ffe066}}
+@keyframes tBx{to{transform:translateX(72px)}}
+@keyframes tBy{0%{transform:translateY(0);animation-timing-function:cubic-bezier(.33,.66,.66,1)}50%{transform:translateY(-38px);animation-timing-function:cubic-bezier(.33,0,.66,.33)}100%{transform:translateY(0)}}
+@keyframes tNode{0%,100%{fill:rgba(255,255,255,.62)}30%{fill:#141a24}}
+
 /* boot */
 #boot{position:fixed;inset:0;z-index:50;background:#07090d;font-family:var(--mono);font-size:13px;color:var(--dim);padding:24px;overflow:hidden;cursor:pointer}
 #boot .ok{color:var(--aqua)}#boot b{color:var(--ink)}
@@ -218,6 +275,8 @@ a{color:var(--aqua)}
   .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
   .item{background:rgba(255,255,255,.04);border:1px solid var(--line);padding:18px 10px 14px}
   .item svg{width:54px;height:44px;filter:drop-shadow(0 4px 5px rgba(0,0,0,.35))}
+  .item svg.tile{width:100%;max-width:132px;height:auto}
+  .item{background:none;border:0;padding:6px 4px 10px}
   .item:hover svg{transform:none}
   .f{padding:10px 4px}
   .statusbar{border:0;padding:4px 16px 24px;justify-content:center;gap:16px}
@@ -308,12 +367,12 @@ var SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSI
 var BUCKET = "materials";
 // Folders: dir is the storage folder name, name is what students see.
 var COURSES = [
-  {dir:"selected-topics", name:"Selected Topics",                               tint:"#ef7f78", icon:"bulb"},
-  {dir:"logic-design",    name:"Logic Design and Computer Organization",        tint:"#f2b25a", icon:"gate"},
+  {dir:"selected-topics", name:"Selected Topics",                               tint:"#ef7f78", icon:"map"},
+  {dir:"logic-design",    name:"Logic Design and Computer Organization",        tint:"#f2b25a", icon:"cpu"},
   {dir:"dynamics",        name:"Dynamics",                                      tint:"#72d1bd", icon:"proj"},
-  {dir:"diff-eq",         name:"Differential Equations and Numerical Analysis", tint:"#8db6ee", icon:"wave"},
+  {dir:"diff-eq",         name:"Differential Equations and Numerical Analysis", tint:"#8db6ee", icon:"skull"},
   {dir:"data-structures", name:"Data Structures and Problem Solving",           tint:"#c69bf0", icon:"tree"},
-  {dir:"software-eng",    name:"Advanced Software Engineering",                 tint:"#a8d47a", icon:"gear"}
+  {dir:"software-eng",    name:"Advanced Software Engineering",                 tint:"#a8d47a", icon:"layers"}
 ];
 // -------------------
 
@@ -321,6 +380,64 @@ var sb = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_K
 var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 function $(id){ return document.getElementById(id); }
 function el(t,c,x){ var e=document.createElement(t); if(c) e.className=c; if(x!=null) e.textContent=x; return e; }
+function shade(h,p){ var n=parseInt(h.slice(1),16), c=[n>>16,n>>8&255,n&255].map(function(v){ return Math.round(p<0?v*(1+p):v+(255-v)*p); }); return "rgb("+c.join(",")+")"; }
+var PIN='<path class="pinb" d="M0 0c-4-5-6-8-6-11a6 6 0 0 1 12 0c0 3-2 6-6 11z"/><circle cy="-11" r="2.2" fill="#fff" stroke="none"/>';
+var TILES={
+  map:'<g class="k"><path class="w2" d="M30 20h46l4 5 10-2 5 16-6 6 4 25-16 12H32z"/><path d="M62 81c-5-12 3-20-2-31s5-18 3-30" stroke="#2f6fd0" stroke-width="2.6"/><path class="route" d="M44 38L70 54 52 66"/><path class="pwr" d="M44 38L50 30 58 34 70 54"/></g>'+
+       '<g transform="translate(44 38)"><g class="pin p1">'+PIN+'</g></g><g transform="translate(70 54)"><g class="pin p2">'+PIN+'</g></g><g transform="translate(52 66)"><g class="pin p3">'+PIN+'</g></g>',
+  cpu:'<g class="k"><path class="tr" d="M10 36h26M10 48h26M10 60h26M110 36H84M110 48H84M110 60H84M44 10v18M60 10v18M76 10v18M44 86V68M60 86V68M76 86V68"/><rect class="w" x="36" y="28" width="48" height="40" rx="6"/><rect class="core c1" x="42" y="34" width="16" height="12" rx="2"/><rect class="core c2" x="62" y="34" width="16" height="12" rx="2"/><rect class="core c3" x="42" y="50" width="16" height="12" rx="2"/><rect class="core c4" x="62" y="50" width="16" height="12" rx="2"/></g>',
+  proj:'<g class="k"><path d="M14 76h92"/><path d="M24 72Q60 -8 96 72" stroke-dasharray="2 4" opacity=".6"/><path class="w" d="M16 76l9-11 4 3-7 8z"/><g class="bx"><g class="by"><circle class="ball" cx="24" cy="70" r="4.6"/></g></g></g>',
+  skull:'<g class="k"><g class="sk"><path class="w" d="M60 20c-14 0-24 9-24 22 0 8 4 13 9 16v8a3 3 0 0 0 3 3h24a3 3 0 0 0 3-3v-8c5-3 9-8 9-16 0-13-10-22-24-22z"/><ellipse cx="51" cy="43" rx="5.5" ry="6" fill="#141a24"/><ellipse cx="69" cy="43" rx="5.5" ry="6" fill="#141a24"/><path d="M60 50l-3 6h6z" fill="#141a24"/><path d="M53 69v-6M60 69v-6M67 69v-6"/></g>'+
+        '<g class="fl"><path d="M60 86V58" stroke="#2f7a3a" stroke-width="3"/><path d="M60 74c-9-1-13-6-13-11 7 0 12 4 13 11z" fill="#4caf50" stroke="#2f7a3a"/><g class="pt"><ellipse cx="60" cy="31" rx="6.5" ry="11" fill="#fff"/><ellipse cx="60" cy="31" rx="6.5" ry="11" fill="#fff" transform="rotate(60 60 44)"/><ellipse cx="60" cy="31" rx="6.5" ry="11" fill="#fff" transform="rotate(120 60 44)"/><ellipse cx="60" cy="31" rx="6.5" ry="11" fill="#fff" transform="rotate(180 60 44)"/><ellipse cx="60" cy="31" rx="6.5" ry="11" fill="#fff" transform="rotate(240 60 44)"/><ellipse cx="60" cy="31" rx="6.5" ry="11" fill="#fff" transform="rotate(300 60 44)"/></g><circle cx="60" cy="44" r="6.5" fill="#ffd34d"/></g></g>',
+  tree:'<g class="k"><g opacity=".45"><path d="M20 64l18-8M20 64l14 14M38 56l14 14M34 78l18-8"/><circle class="w" cx="20" cy="64" r="3.4"/><circle class="w" cx="38" cy="56" r="3.4"/><circle class="w" cx="34" cy="78" r="3.4"/><circle class="w" cx="52" cy="70" r="3.4"/></g>'+
+       '<rect class="sq l1" x="10" y="18" width="18" height="13" rx="3"/><path d="M28 24.5h6"/><rect class="sq l2" x="34" y="18" width="18" height="13" rx="3"/><path d="M52 24.5h6"/><rect class="sq l3" x="58" y="18" width="18" height="13" rx="3"/><path d="M76 24.5c8 0 12 4 12 11"/>'+
+       '<path d="M88 40l-12 16M88 40l12 16M76 56l-6 16M76 56l6 16M100 56l-6 16M100 56l6 16"/><circle class="sq t1" cx="88" cy="40" r="4.6"/><circle class="sq t2" cx="76" cy="56" r="4.2"/><circle class="sq t2" cx="100" cy="56" r="4.2"/><circle class="sq t3" cx="70" cy="73" r="3.6"/><circle class="sq t3" cx="82" cy="73" r="3.6"/><circle class="sq t3" cx="94" cy="73" r="3.6"/><circle class="sq t3" cx="106" cy="73" r="3.6"/></g>',
+  layers:'<g class="k"><rect class="w" x="12" y="14" width="24" height="18" rx="2"/><path d="M12 20h24M12 26h24"/><path d="M36 23h8" stroke-dasharray="2 2"/>'+
+       '<g class="ly ly3"><path class="w" d="M60 60l30 10-30 10-30-10z" opacity=".7"/></g><g class="ly ly2"><path class="w" d="M60 46l30 10-30 10-30-10z" opacity=".85"/></g><g class="ly ly1"><path class="w" d="M60 32l30 10-30 10-30-10z"/><path d="M50 42h8M60 44h10"/></g>'+
+       '<g class="gr2"><path d="M98 14v4M98 30v4M88 24h4M104 24h4M90.9 16.9l2.8 2.8M102.3 28.3l2.8 2.8M105.1 16.9l-2.8 2.8M93.7 28.3l-2.8 2.8" stroke-width="3.4"/><circle class="w" cx="98" cy="24" r="5.6"/><circle cx="98" cy="24" r="1.8"/></g></g>'
+};
+function tileSvg(c){
+  var id="t"+c.dir.replace(/[^a-z]/g,"");
+  return '<svg class="tile tile-'+c.icon+'" viewBox="0 0 120 96" aria-hidden="true"><defs>'+
+    '<linearGradient id="'+id+'g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+shade(c.tint,.12)+'"/><stop offset="1" stop-color="'+shade(c.tint,-.32)+'"/></linearGradient>'+
+    '<radialGradient id="'+id+'h" cx=".25" cy=".1" r=".95"><stop offset="0" stop-color="#fff" stop-opacity=".42"/><stop offset=".55" stop-color="#fff" stop-opacity="0"/></radialGradient></defs>'+
+    '<rect x="2" y="2" width="116" height="92" rx="18" fill="url(#'+id+'g)"/><rect x="2" y="2" width="116" height="92" rx="18" fill="url(#'+id+'h)"/>'+
+    '<rect x="2.6" y="2.6" width="114.8" height="90.8" rx="17.4" fill="none" stroke="#fff" stroke-opacity=".4"/><path d="M8 90h104" stroke="#000" stroke-opacity=".18" stroke-width="3" stroke-linecap="round"/>'+
+    (TILES[c.icon]||'')+'</svg>';
+}
+var GLYPH={
+  lectures:'<rect x="4" y="5" width="16" height="10" rx="1"/><path d="M12 15v4M8 19h8M7 12l3-3 2 2 4-4"/>',
+  tutorials:'<path d="M5 19l1-4 9-9 3 3-9 9z"/><path d="M13 8l3 3"/>',
+  sheets:'<rect x="6" y="4" width="11" height="14" rx="1"/><path d="M9 8h5M9 11h5M9 14h3M8 20h11V7"/>',
+  labs:'<path d="M10 4h4M11 4v5l-5 9a2 2 0 0 0 2 3h8a2 2 0 0 0 2-3l-5-9V4"/><path d="M8 15h8"/>',
+  assignments:'<rect x="6" y="5" width="12" height="15" rx="2"/><path d="M9 5V4h6v1M9 13l2 2 4-4"/>',
+  project:'<rect x="4" y="5" width="16" height="14" rx="1"/><path d="M4 10h6v9M10 14h10M14 5v5"/>',
+  task:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1.2"/>',
+  exam:'<rect x="4.5" y="4" width="11" height="15" rx="1"/><path d="M7.5 8h5M7.5 11h5"/><circle cx="16.5" cy="16.5" r="3.6"/><path d="M16.5 15v1.7l1.1.8"/>',
+  book:'<path d="M5 5h9a3 3 0 0 1 3 3v12H8a3 3 0 0 1-3-3z"/><path d="M14 5v6l-2-1.5L10 11V5"/>',
+  extra:'<path d="M4 9l8-4 8 4v8l-8 4-8-4z"/><path d="M4 9l8 4 8-4M12 13v8"/>',
+  folder:'<path d="M3.5 7a1.5 1.5 0 0 1 1.5-1.5h4.2l2 2H19A1.5 1.5 0 0 1 20.5 9v8a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 17z"/>'
+};
+function subKind(name){
+  var n=name.toLowerCase();
+  if(/material/.test(n)) return "book";
+  if(/lecture/.test(n)) return "lectures";
+  if(/tutorial/.test(n)) return "tutorials";
+  if(/sheet/.test(n)) return "sheets";
+  if(/lab/.test(n)) return "labs";
+  if(/assign/.test(n)) return "assignments";
+  if(/project/.test(n)) return "project";
+  if(/task/.test(n)) return "task";
+  if(/final/.test(n)) return "final";
+  if(/mid|quiz|exam/.test(n)) return "exam";
+  if(/extra/.test(n)) return "extra";
+  return "folder";
+}
+function subSvg(tint,name){
+  var k=subKind(name), fin=k==="final", g=GLYPH[fin?"exam":k];
+  return '<svg class="sub sub-'+k+'" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="6.5" fill="'+(fin?shade(tint,-.45):shade(tint,.05))+'"/><rect width="24" height="12" rx="6.5" fill="#fff" opacity=".18"/>'+
+    '<g fill="none" stroke="'+(fin?"#fff":"rgba(14,18,26,.82)")+'" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" transform="translate(2.4 2.4) scale(.8)">'+g+'</g></svg>';
+}
 var EMB={
   bulb:'<g class="em em-bulb"><path class="rays" d="M32 16.5v2.5M24.2 20.2l1.7 1.7M39.8 20.2l-1.7 1.7M21.5 28h2.4M40.1 28h2.4"/><path class="glass" d="M32 22a6 6 0 0 0-3.6 10.8V35.5h7.2v-2.7A6 6 0 0 0 32 22z"/><path d="M29.4 38.5h5.2M30.4 41.2h3.2"/></g>',
   gate:'<g class="em em-gate"><path class="in" d="M17 27h9M17 35h9"/><path d="M26 23.5h6.5a7.5 7.5 0 0 1 0 15H26z"/><path class="in" d="M40 31h5"/><circle class="led" cx="47.2" cy="31" r="1.9"/></g>',
@@ -383,8 +500,8 @@ var EXT={pdf:"#ef7f78",ppt:"#f2b25a",pptx:"#f2b25a",doc:"#8db6ee",docx:"#8db6ee"
 /* ---------- home: folders ---------- */
 var grid=$("grid"), rows=$("rows"), sideC=$("sideCourses"), view=$("view"), files=$("files"), fm=document.querySelector(".fm"), countEl=$("count");
 COURSES.forEach(function(c){
-  var a=el("a","item"); a.href="#"+c.dir; a.innerHTML=folderSvg(c.tint,c.icon); a.appendChild(el("span","n",c.name)); grid.appendChild(a);
-  var tr=el("tr"), td=el("td"), la=el("a"); la.href="#"+c.dir; la.innerHTML=folderSvg(c.tint,c.icon); la.appendChild(document.createTextNode(c.name));
+  var a=el("a","item"); a.href="#"+c.dir; a.innerHTML=tileSvg(c); a.appendChild(el("span","n",c.name)); grid.appendChild(a);
+  var tr=el("tr"), td=el("td"), la=el("a"); la.href="#"+c.dir; la.innerHTML=tileSvg(c); la.appendChild(document.createTextNode(c.name));
   td.appendChild(la); tr.appendChild(td); rows.appendChild(tr);
   var s=el("a"); s.href="#"+c.dir; s.dataset.dir=c.dir; var sw=el("span","sw"); sw.style.background=c.tint; s.appendChild(sw); s.appendChild(el("span","lbl",c.name)); s.title=c.name;
   sideC.appendChild(s);
@@ -416,7 +533,7 @@ function pubUrl(path,name){ return sb.storage.from(BUCKET).getPublicUrl(path+"/"
 function pretty(path){ var p=path.split("/"), c=course(p[0]); return [c?c.name:p[0]].concat(p.slice(1)).join(" › "); }
 function folderRow(path,name){
   var li=el("li","f"), a=el("a"); a.href="#"+encodeURI(path+"/"+name);
-  var ic=el("span","fico"); ic.innerHTML=folderSvg(course(path.split("/")[0]).tint); a.appendChild(ic);
+  var ic=el("span","fico"); ic.innerHTML=subSvg(course(path.split("/")[0]).tint,name); a.appendChild(ic);
   var fn=el("span","fn"); fn.appendChild(el("b",null,name)); a.appendChild(fn);
   li.appendChild(a);
   var rn=el("button","del ren","Rename"); rn.type="button"; rn.onclick=function(){ askRename(path,name,true); }; li.appendChild(rn);
@@ -449,12 +566,12 @@ function route(){
   document.querySelectorAll("#sideCourses a").forEach(function(a){ a.classList.toggle("on",a.dataset.dir===top); });
   $("sideHome").classList.toggle("on",!current);
   if(!c){
-    fm.classList.remove("in-folder"); $("loc").textContent="Home"; document.title="Sophomore Materials";
+    fm.classList.remove("in-folder"); $("loc").textContent="Home"; document.title="Sophomore Materials"; $("winFiles").style.setProperty("--accent","transparent");
     $("q").placeholder="Search folders and files";
     showHome(""); return;
   }
   var name=current.split("/").pop(), here=current.indexOf("/")<0?c.name:name;
-  fm.classList.add("in-folder"); $("loc").textContent=pretty(current); document.title=here+" · Sophomore Materials";
+  fm.classList.add("in-folder"); $("loc").textContent=pretty(current); var dot=el("span","dot"); dot.style.background=c.tint; $("loc").insertBefore(dot,$("loc").firstChild); $("winFiles").style.setProperty("--accent",c.tint); document.title=here+" · Sophomore Materials";
   $("q").placeholder="Search in "+here;
   renderFolder("");
 }
