@@ -156,6 +156,9 @@ a{color:var(--aqua)}
 .dlg form{width:min(380px,100%);background:var(--winsolid);border:1px solid var(--line);border-radius:12px;padding:20px;display:grid;gap:12px}
 .dlg h2{margin:0;font-size:16px}
 .dlg p{margin:0;color:var(--dim);font-size:13px;line-height:1.5}
+.dlg select{background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:8px;padding:9px 11px;color:var(--ink);font:inherit;font-size:15px}
+.dlg select option{background:var(--winsolid)}
+.dlg input[type=datetime-local]{color-scheme:dark}
 .dlg input{background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:8px;padding:9px 11px;color:var(--ink);font:inherit;font-size:15px}
 .dlg .acts{display:flex;justify-content:flex-end;gap:8px}
 .dlg button{border-radius:8px;padding:8px 14px;font:600 13px var(--ui);cursor:pointer;border:1px solid var(--line);background:none;color:var(--ink)}
@@ -275,6 +278,35 @@ a{color:var(--aqua)}
 @keyframes zSpark{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(.3);opacity:0}}
 @keyframes fIn{from{opacity:0;transform:translateY(12px) scale(.98)}}
 
+/* home dashboard */
+.dash{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;margin-bottom:18px}
+.in-folder .dash,.view.searching .dash{display:none}
+.panel{background:rgba(255,255,255,.035);border:1px solid var(--line);border-radius:12px;padding:12px 12px 8px;min-width:0;box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}
+.ph{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 2px 8px}
+.ph h2{margin:0;font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--dim)}
+.addDue{display:none;width:24px;height:24px;border-radius:7px;border:0;background:var(--amber);color:#111;font:700 16px/1 var(--ui);cursor:pointer}
+.admin .addDue{display:block}
+.plist{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.plist li{min-width:0}
+.pr .cd,.pr .x,.pr .ago,.pr .badge{flex:none}
+.plist .muted{color:var(--dim);font-size:13px;padding:10px 4px}
+.pr{display:flex;align-items:center;gap:10px;padding:7px 6px;border-radius:8px;color:var(--ink);text-decoration:none;min-width:0;width:100%;box-sizing:border-box}
+a.pr:hover{background:rgba(255,255,255,.06)}
+.pr .badge{width:30px;height:33px;font-size:9.5px;border-radius:6px 9px 6px 6px}
+.pr .tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.pr .tx b{font-weight:500;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pr .tx small{color:var(--dim);font-size:11.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pr .cdot{display:inline-block;width:7px;height:7px;border-radius:2px;margin-right:6px;vertical-align:0}
+.pr .ago{color:var(--dim);font-size:11.5px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.cd{font:700 15px var(--mono);white-space:nowrap;font-variant-numeric:tabular-nums;padding:3px 8px;border-radius:7px;background:rgba(255,255,255,.06)}
+.cd.soon{background:rgba(242,178,90,.18);color:var(--amber)}
+.cd.urgent{background:rgba(239,127,120,.2);color:var(--rose)}
+.pr .x{display:none;background:none;border:0;color:var(--dim);font-size:16px;cursor:pointer;padding:2px 4px;border-radius:5px}
+.admin .pr .x{display:block}
+.pr .x:hover{color:var(--rose)}
+@media (max-width:860px){
+  .dash{grid-template-columns:minmax(0,1fr);gap:10px;margin-bottom:14px}
+}
 /* boot */
 #boot{position:fixed;inset:0;z-index:50;background:#07090d;font-family:var(--mono);font-size:13px;color:var(--dim);padding:24px;overflow:hidden;cursor:pointer}
 #boot .ok{color:var(--aqua)}#boot b{color:var(--ink)}
@@ -358,6 +390,16 @@ a{color:var(--aqua)}
             <input type="file" id="fileIn" multiple hidden>
           </div>
           <div class="view" id="view">
+            <div class="dash" id="dash">
+              <section class="panel" aria-labelledby="recentH">
+                <div class="ph"><h2 id="recentH">Recently added</h2></div>
+                <ul class="plist" id="recent"></ul>
+              </section>
+              <section class="panel" aria-labelledby="dueH">
+                <div class="ph"><h2 id="dueH">Deadlines</h2><button type="button" class="addDue" id="addDue" aria-label="Add deadline">+</button></div>
+                <ul class="plist" id="dues"></ul>
+              </section>
+            </div>
             <div class="grid" id="grid"></div>
             <p class="empty" id="empty">No folders or files match your search.</p>
             <ul class="files" id="files"></ul>
@@ -374,6 +416,13 @@ a{color:var(--aqua)}
   <h2>Coordinator sign in</h2>
   <input type="email" id="loginEmail" required placeholder="Email" aria-label="Email">
   <div class="acts"><button type="button" id="loginCancel">Cancel</button><button class="pri" type="submit">Send link</button></div>
+</form></div>
+<div class="dlg" id="dueDlg"><form id="dueForm">
+  <h2>New deadline</h2>
+  <select id="dueCourse" aria-label="Course" required></select>
+  <input type="text" id="dueTitle" required maxlength="80" placeholder="Title" aria-label="Title">
+  <input type="datetime-local" id="dueAt" required aria-label="Due date and time">
+  <div class="acts"><button type="button" id="dueCancel">Cancel</button><button class="pri" type="submit">Add</button></div>
 </form></div>
 <div class="dlg" id="renameDlg"><form id="renameForm">
   <h2>Rename</h2>
@@ -627,6 +676,7 @@ function showHome(q){
   var n=0, items=grid.children, trs=rows.children;
   COURSES.forEach(function(c,i){ var hit=!q||c.name.toLowerCase().indexOf(q)>=0; if(hit) n++; items[i].style.display=hit?"":"none"; trs[i].style.display=hit?"":"none"; });
   files.textContent="";
+  view.classList.toggle("searching",!!q);
   if(!q){ fm.classList.remove("in-folder"); $("empty").style.display="none"; countEl.textContent=COURSES.length+" folders"; return; }
   Promise.all(COURSES.map(function(c){ return walk(c.dir,3).catch(function(){return [];}); }))
   .then(function(all){
@@ -655,6 +705,75 @@ try{ if(localStorage.getItem("sm-view")==="list") setView(true); }catch(e){}
 function tick(){ var d=new Date(); $("clock").textContent=
   d.toLocaleDateString(undefined,{weekday:"short",day:"numeric",month:"short"})+"   "+d.toLocaleTimeString(undefined,{hour:"2-digit",minute:"2-digit"}); }
 tick(); setInterval(tick,15000);
+
+/* ---------- home dashboard ---------- */
+function ago(iso){ var m=Math.max(0,Math.round((Date.now()-new Date(iso))/60000)); if(m<60) return m+"m"; var h=Math.round(m/60); if(h<48) return h+"h"; return Math.round(h/24)+"d"; }
+function loadRecent(){
+  var box=$("recent"); if(!sb){ return; }
+  sb.from("updates").select("*").order("id",{ascending:false}).limit(40).then(function(r){
+    var rows=(r.data||[]).filter(function(x){ return course(x.course); }), seen={};
+    rows=rows.filter(function(x){ var k=x.course+"/"+x.file_name; if(seen[k]) return false; seen[k]=1; return true; });
+    var dirs={}; rows.forEach(function(x){ var p=(x.course+"/"+x.file_name).split("/"); p.pop(); dirs[p.join("/")]=1; });
+    return Promise.all(Object.keys(dirs).map(function(d){ return listDir(d).then(function(l){ return [d,l.files.map(function(f){return f.name;})]; }).catch(function(){ return [d,[]]; }); }))
+      .then(function(ls){
+        var have={}; ls.forEach(function(e){ e[1].forEach(function(n){ have[e[0]+"/"+n]=1; }); });
+        var live=rows.filter(function(x){ return have[x.course+"/"+x.file_name]; }).slice(0,6);
+        box.textContent="";
+        if(!live.length){ box.appendChild(el("li","muted","Nothing new yet")); return; }
+        live.forEach(function(x){
+          var parts=(x.course+"/"+x.file_name).split("/"), name=parts.pop(), dir=parts.join("/"), c=course(x.course);
+          var a=el("a","pr"); a.href=pubUrl(dir,name); a.target="_blank"; a.rel="noopener";
+          var ext=(name.split(".").pop()||"").toLowerCase(); if(ext===name.toLowerCase()) ext="file";
+          var b=el("span","badge",ext.slice(0,4)); b.style.background=EXT[ext]||"#8f9aa8"; a.appendChild(b);
+          var tx=el("span","tx"); tx.appendChild(el("b",null,name));
+          var sm=el("small"); var dot=el("span","cdot"); dot.style.background=c.tint; sm.appendChild(dot); sm.appendChild(document.createTextNode(pretty(dir))); tx.appendChild(sm);
+          a.appendChild(tx); a.appendChild(el("span","ago",ago(x.created_at)));
+          var li=el("li"); li.appendChild(a); box.appendChild(li);
+        });
+      });
+  });
+}
+var dues=[];
+function left(iso){
+  var ms=new Date(iso)-Date.now(); if(ms<=0) return {t:"due",cls:"urgent"};
+  var m=Math.floor(ms/60000), d=Math.floor(m/1440), h=Math.floor(m%1440/60), mi=m%60;
+  var t=d>0?(d+"d "+h+"h"):h>0?(h+"h "+mi+"m"):(mi+"m");
+  return {t:t,cls:ms<864e5?"urgent":ms<3*864e5?"soon":""};
+}
+function renderDues(){
+  var box=$("dues"); box.textContent="";
+  var up=dues.filter(function(d){ return new Date(d.due_at)>Date.now(); });
+  if(!up.length){ box.appendChild(el("li","muted","No upcoming deadlines")); return; }
+  up.forEach(function(d){
+    var c=course(d.course), row=el("div","pr"), tx=el("span","tx");
+    tx.appendChild(el("b",null,d.title));
+    var sm=el("small"); var dot=el("span","cdot"); dot.style.background=c?c.tint:"#8f9aa8"; sm.appendChild(dot);
+    sm.appendChild(document.createTextNode(new Date(d.due_at).toLocaleString(undefined,{weekday:"short",day:"numeric",month:"short",hour:"numeric",minute:"2-digit"})+" · "+(c?c.name:d.course)));
+    tx.appendChild(sm); row.appendChild(tx);
+    var L=left(d.due_at); row.appendChild(el("span","cd"+(L.cls?" "+L.cls:""),L.t));
+    var x=el("button","x","×"); x.type="button"; x.setAttribute("aria-label","Delete "+d.title);
+    x.onclick=function(){ if(!sure(x)) return; sb.from("deadlines").delete().eq("id",d.id).then(function(r){ if(r.error){ toast("Couldn't delete: "+r.error.message,6000); return; } loadDues(); }); };
+    row.appendChild(x);
+    var li=el("li"); li.appendChild(row); box.appendChild(li);
+  });
+}
+function loadDues(){
+  if(!sb) return;
+  sb.from("deadlines").select("*").gt("due_at",new Date().toISOString()).order("due_at").limit(8).then(function(r){ dues=r.data||[]; renderDues(); });
+}
+setInterval(renderDues,30000);
+COURSES.forEach(function(c){ var o=el("option",null,c.name); o.value=c.dir; $("dueCourse").appendChild(o); });
+$("addDue").onclick=function(){ $("dueTitle").value=""; $("dueAt").value=""; $("dueDlg").classList.add("on"); $("dueTitle").focus(); };
+$("dueCancel").onclick=function(){ $("dueDlg").classList.remove("on"); };
+$("dueForm").addEventListener("submit",function(e){
+  e.preventDefault();
+  var when=new Date($("dueAt").value);
+  if(isNaN(when)){ toast("Pick a date and time"); return; }
+  sb.from("deadlines").insert({course:$("dueCourse").value,title:$("dueTitle").value.trim(),due_at:when.toISOString()}).then(function(r){
+    if(r.error){ toast("Couldn't add: "+r.error.message,6000); return; }
+    $("dueDlg").classList.remove("on"); toast("Deadline added"); loadDues();
+  });
+});
 
 /* ---------- coordinator ---------- */
 var isAdmin=false;
@@ -687,7 +806,7 @@ function upload(list){
       return sb.from("updates").insert({course:top,file_name:(sub?sub+"/":"")+name,action:"added"});
     });
   })).then(function(){
-    delete cache[path]; if(current===path) renderFolder("");
+    delete cache[path]; if(current===path) renderFolder(""); loadRecent();
     toast(failed?(done+" uploaded, "+failed+" failed. Try the failed ones again."):(done===1?"Uploaded "+names[0]:"Uploaded "+done+" files"),5000);
   });
 }
@@ -763,6 +882,7 @@ view.addEventListener("dragleave",function(){ view.classList.remove("drop"); });
 view.addEventListener("drop",function(e){ view.classList.remove("drop"); if(isAdmin&&current){ e.preventDefault(); upload(e.dataTransfer.files); } });
 
 route();
+loadRecent(); loadDues();
 
 /* ---------- window tilt ---------- */
 (function(){
