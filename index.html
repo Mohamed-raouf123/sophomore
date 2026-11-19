@@ -836,6 +836,8 @@ function removeFile(path,name,b){
   sb.storage.from(BUCKET).remove([path+"/"+name]).then(function(r){
     if(r.error){ toast("Couldn't delete: "+r.error.message,6000); return; }
     delete cache[path]; if(current===path) renderFolder(""); toast("Deleted "+name);
+    var rel=path.split("/"), cr=rel.shift();
+    sb.from("updates").delete().eq("course",cr).eq("file_name",rel.concat(name).join("/")).then(function(){ loadRecent(); });
   });
 }
 function removeFolder(path,name,b){
