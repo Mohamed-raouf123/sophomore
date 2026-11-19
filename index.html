@@ -954,8 +954,16 @@ loadRecent(); loadDues();
     seq.forEach(function(q){ p=p.then(function(){ if(g!==gen) return; img.src=src[q[0]]; return new Promise(function(r){ setTimeout(r,q[1]); }); }); });
     p.then(function(){ if(g===gen) busy=false; }); }
   (function loop(){ setTimeout(function(){ if(!busy&&!document.hidden){ var s=ACT[k]||ALT[k][Math.random()<.5?0:1]; play(s); } loop(); },5000+Math.random()*4000); })();
-  box.addEventListener("click",function(){ gen++; busy=true; img.src=look; bub.textContent=LINES[k][li++%LINES[k].length]; bub.classList.add("on");
-    clearTimeout(t1); t1=setTimeout(function(){ bub.classList.remove("on"); img.src=src[0]; gen++; busy=false; },4200); });
+  function news(){ var out=[], now=Date.now();
+    try{ (dues||[]).filter(function(d){ var ms=new Date(d.due_at)-now; return ms>0&&ms<3*864e5; }).sort(function(a,b){ return new Date(a.due_at)-new Date(b.due_at); }).slice(0,2).forEach(function(d){ var c=course(d.course), ms=new Date(d.due_at)-now;
+      out.push((ms<864e5?"⚠️ ":"⏰ ")+(c?({"selected-topics":"Selected Topics","logic-design":"Logic","dynamics":"Dynamics","diff-eq":"Diff Eq","data-structures":"DS","software-eng":"ASE"}[d.course]||c.name)+" ":"")+d.title+" is due in "+left(d.due_at).t+(ms<864e5?". Lock in!":". Don't leave it last minute")); }); }catch(e){}
+    try{ var r=[].slice.call(document.querySelectorAll("#recent li a b")); if(r.length) out.push(r.length===1?"New drop: "+r[0].textContent+" 👀":r.length+" new files dropped today 👀 check Recently added"); }catch(e){}
+    return out; }
+  function talk(text){ gen++; busy=true; img.src=look; bub.textContent=text; bub.classList.add("on");
+    clearTimeout(t1); t1=setTimeout(function(){ bub.classList.remove("on"); img.src=src[0]; gen++; busy=false; },4800); }
+  var ni=0;
+  box.addEventListener("click",function(){ var n=news(), all=n.concat(LINES[k]); talk(all[ni++%all.length]); });
+  setTimeout(function(){ var n=news(); if(n.length&&!document.hidden) talk(n[0]); },3500);
 })();
 
 /* ---------- boot ---------- */
