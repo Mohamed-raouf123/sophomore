@@ -318,7 +318,7 @@ a.pr:hover{background:rgba(255,255,255,.06)}
 .obub{position:absolute;left:30%;bottom:100%;margin-bottom:6px;white-space:nowrap;background:#fff;color:#1b1820;font:600 13px/1.3 var(--mono);padding:8px 11px;border:3px solid #1b1820;box-shadow:4px 4px 0 rgba(0,0,0,.3);opacity:0;transform:translateY(6px);transition:.25s;pointer-events:none}
 .obub.on{opacity:1;transform:none}
 .obub:after{content:"";position:absolute;left:18px;top:100%;border:7px solid transparent;border-top-color:#1b1820}
-@media (min-width:861px){ .desktop{padding-left:max(24px,min(250px,calc(1594px - 100vw)))} }
+@media (min-width:861px){ .desktop{grid-template-columns:minmax(0,min(1000px,calc(100vw - 520px)));padding-left:24px;padding-right:24px} }
 @media (max-width:860px){ #oufa{display:none} }
 /* boot */
 #boot{position:fixed;inset:0;z-index:50;background:#07090d;font-family:var(--mono);font-size:13px;color:var(--dim);padding:24px;overflow:hidden;cursor:pointer}
