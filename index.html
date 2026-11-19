@@ -302,7 +302,10 @@ a.pr:hover{background:rgba(255,255,255,.06)}
 .cd.soon{background:rgba(242,178,90,.18);color:var(--amber)}
 .cd.urgent{background:rgba(239,127,120,.2);color:var(--rose)}
 .pr .x{display:none;background:none;border:0;color:var(--dim);font-size:16px;cursor:pointer;padding:2px 4px;border-radius:5px}
-.admin .pr .x{display:block}
+.admin .pr .x,.admin .pr .ed{display:block}
+.pr .ed{display:none;background:none;border:0;color:var(--dim);cursor:pointer;padding:3px;border-radius:5px;flex:none}
+.pr .ed svg{width:14px;height:14px;display:block}
+.pr .ed:hover{color:var(--ink)}
 .pr .x:hover{color:var(--rose)}
 @media (max-width:860px){
   .dash{grid-template-columns:minmax(0,1fr);gap:10px;margin-top:18px}
@@ -418,11 +421,11 @@ a.pr:hover{background:rgba(255,255,255,.06)}
   <div class="acts"><button type="button" id="loginCancel">Cancel</button><button class="pri" type="submit">Send link</button></div>
 </form></div>
 <div class="dlg" id="dueDlg"><form id="dueForm">
-  <h2>New deadline</h2>
+  <h2 id="dueHead">New deadline</h2>
   <select id="dueCourse" aria-label="Course" required></select>
   <input type="text" id="dueTitle" required maxlength="80" placeholder="Title" aria-label="Title">
   <input type="datetime-local" id="dueAt" required aria-label="Due date and time">
-  <div class="acts"><button type="button" id="dueCancel">Cancel</button><button class="pri" type="submit">Add</button></div>
+  <div class="acts"><button type="button" id="dueCancel">Cancel</button><button class="pri" type="submit" id="dueSave">Add</button></div>
 </form></div>
 <div class="dlg" id="renameDlg"><form id="renameForm">
   <h2>Rename</h2>
@@ -751,6 +754,9 @@ function renderDues(){
     sm.appendChild(document.createTextNode(new Date(d.due_at).toLocaleString(undefined,{weekday:"short",day:"numeric",month:"short",hour:"numeric",minute:"2-digit"})+" · "+(c?c.name:d.course)));
     tx.appendChild(sm); row.appendChild(tx);
     var L=left(d.due_at); row.appendChild(el("span","cd"+(L.cls?" "+L.cls:""),L.t));
+    var ed=el("button","ed"); ed.type="button"; ed.setAttribute("aria-label","Edit "+d.title);
+    ed.innerHTML='<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M3 13l.6-2.6L10.8 3.2l2 2L5.6 12.4z"/><path d="M9.6 4.4l2 2"/></svg>';
+    ed.onclick=function(){ openDue(d); }; row.appendChild(ed);
     var x=el("button","x","×"); x.type="button"; x.setAttribute("aria-label","Delete "+d.title);
     x.onclick=function(){ if(!sure(x)) return; sb.from("deadlines").delete().eq("id",d.id).then(function(r){ if(r.error){ toast("Couldn't delete: "+r.error.message,6000); return; } loadDues(); }); };
     row.appendChild(x);
@@ -763,15 +769,25 @@ function loadDues(){
 }
 setInterval(renderDues,30000);
 COURSES.forEach(function(c){ var o=el("option",null,c.name); o.value=c.dir; $("dueCourse").appendChild(o); });
-$("addDue").onclick=function(){ $("dueTitle").value=""; $("dueAt").value=""; $("dueDlg").classList.add("on"); $("dueTitle").focus(); };
+var editingDue=null;
+function localInput(iso){ var d=new Date(iso), p=function(n){ return (n<10?"0":"")+n; }; return d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate())+"T"+p(d.getHours())+":"+p(d.getMinutes()); }
+function openDue(d){
+  editingDue=d||null;
+  $("dueHead").textContent=d?"Edit deadline":"New deadline"; $("dueSave").textContent=d?"Save":"Add";
+  $("dueCourse").value=d?d.course:COURSES[0].dir; $("dueTitle").value=d?d.title:""; $("dueAt").value=d?localInput(d.due_at):"";
+  $("dueDlg").classList.add("on"); $("dueTitle").focus();
+}
+$("addDue").onclick=function(){ openDue(null); };
 $("dueCancel").onclick=function(){ $("dueDlg").classList.remove("on"); };
 $("dueForm").addEventListener("submit",function(e){
   e.preventDefault();
   var when=new Date($("dueAt").value);
   if(isNaN(when)){ toast("Pick a date and time"); return; }
-  sb.from("deadlines").insert({course:$("dueCourse").value,title:$("dueTitle").value.trim(),due_at:when.toISOString()}).then(function(r){
-    if(r.error){ toast("Couldn't add: "+r.error.message,6000); return; }
-    $("dueDlg").classList.remove("on"); toast("Deadline added"); loadDues();
+  var row={course:$("dueCourse").value,title:$("dueTitle").value.trim(),due_at:when.toISOString()}, ed=editingDue;
+  var q=ed?sb.from("deadlines").update(row).eq("id",ed.id):sb.from("deadlines").insert(row);
+  q.then(function(r){
+    if(r.error){ toast((ed?"Couldn't save: ":"Couldn't add: ")+r.error.message,6000); return; }
+    $("dueDlg").classList.remove("on"); toast(ed?"Deadline updated":"Deadline added"); editingDue=null; loadDues();
   });
 });
 
